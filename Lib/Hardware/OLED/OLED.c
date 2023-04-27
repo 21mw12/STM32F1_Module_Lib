@@ -136,7 +136,7 @@ void OLED_Clear(void) {
 void OLED_ShowChar(uint8_t Line, uint8_t Column, char Char, uint8_t Front_size) {      	
 	uint8_t i, line;
 	uint8_t Y = (Line - 1) * 2;
-	uint8_t X = (Column - 1) * 8;
+	uint8_t X = (Column - 1) * Front_size;
 
 	/* 根据一个字符在屏幕上所占的大小，需要分几次才能写完 */
 	/* 因为SSD1306每次只能传输一块的信息，所有要依次写入全部数据 */

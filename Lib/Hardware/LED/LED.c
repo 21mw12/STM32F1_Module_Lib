@@ -12,17 +12,7 @@ void LED_Init(void) {
 	LED_ON();
 }
 
-#if !LED_PIN_STATE
-	// 低电平点亮，编译此处
-
-	void LED_ON(void) {	
-		GPIO_ResetBits(LED_PORT, LED_PIN);
-	}
-
-	void LED_OFF(void) {	
-		GPIO_SetBits(LED_PORT, LED_PIN);
-	}	
-#else
+#if LED_PIN_STATE
 	// 高电平点亮，编译此处
 	
 	void LED_ON(void) {	
@@ -31,6 +21,32 @@ void LED_Init(void) {
 
 	void LED_OFF(void) {	
 		GPIO_ResetBits(LED_PORT, LED_PIN);
+	}
+	
+	void LED_Turn(void) {
+		if (GPIO_ReadOutputDataBit(LED_PORT, LED_PIN)) {
+			LED_OFF();
+		} else {
+			LED_ON();
+		}
+	}
+#else
+	// 低电平点亮，编译此处
+
+	void LED_ON(void) {	
+		GPIO_ResetBits(LED_PORT, LED_PIN);
+	}
+
+	void LED_OFF(void) {	
+		GPIO_SetBits(LED_PORT, LED_PIN);
+	}
+	
+	void LED_Turn(void) {
+		if (!GPIO_ReadOutputDataBit(LED_PORT, LED_PIN)) {
+			LED_OFF();
+		} else {
+			LED_ON();
+		}
 	}
 #endif
 
