@@ -4,9 +4,9 @@
 ///////////////////////////////////////////////////////////
 //
 // 文件功能：串口的相基础功能
-// 版本：V1.0
+// 版本：V1.1
 // 作者：墨蔚（MW）
-// 修改时间：2023/06/11
+// 修改时间：2023/06/13
 //
 ///////////////////////////////////////////////////////////
 
@@ -21,11 +21,18 @@
 #define USART_Pin_TX		GPIO_Pin_10
 #define USART_Periph				RCC_APB2Periph_USART1
 #define USART_PortPeriph		RCC_APB2Periph_GPIOA
+
 /* USART配置 */
 #define BaudRate		115200									// 波特率
 #define Parity			USART_Parity_No					// 校验方式
 #define StopBits		USART_StopBits_1				// 停止位长度
 #define DataLength		USART_WordLength_8b		// 数据长度
+
+/* USART数据包相关配置（注意释放和屏蔽相对应的串口中断函数） */
+#define DataPackage_Length		10				// 数据包最大长度
+#define DataPackageHead_HEX		0xFF		// 十六进制数据包的包头
+#define DataPackageTial_HEX		0x00		// 十六进制数据包的包尾
+#define DataPackageHead_TEXT	'@'			// 文本数据包的包头  （包尾默认为Windows平台的换行符“\r\n”）
 
 /**
   * @brief 串口初始化
@@ -82,4 +89,31 @@ uint8_t Serial_GetRxFlag(void);
   */
 uint8_t Serial_GetRxData(void);
 
+/**
+  * @brief 发送十六进制数据包
+  * @param dataArray 数据数组
+  * @param dataLength 数据长度
+  * @return 无
+  */
+void Serial_SendDatePackage_HEX(uint8_t* dataArray, uint16_t dataLength);
+
+/**
+  * @brief 发送文本数据包
+  * @param String	文本内容
+  * @return 无
+  */
+void Serial_SendDatePackage_TEXT(char* String);
+
 #endif
+
+
+///////////////////////////////////////////////////////////
+//
+// 更新日志：
+// V1.0: 2023/06/11
+//				实现了基础的串口接收发送功能
+// V1.1: 2023/06/13
+//				实现了串口发送接收不定长数据包，
+// 				包括十六进制数据包和文本数据包
+//
+///////////////////////////////////////////////////////////
