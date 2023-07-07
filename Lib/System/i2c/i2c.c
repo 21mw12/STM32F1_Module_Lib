@@ -1,70 +1,46 @@
 #include "i2c.h"
+#include "i2c_software.h"
+#include "i2c_hardware.h"
 
-void SCL_Write(uint8_t state) {
-	GPIO_WriteBit(I2C_PORT, SCL_PIN, (BitAction)state);
-}
-
-void SDA_Write(uint8_t state) {
-	GPIO_WriteBit(I2C_PORT, SDA_PIN, (BitAction)state);
-}
-
-uint8_t SDA_Read(void) {
-    uint8_t BitValue;
-    BitValue = GPIO_ReadInputDataBit(I2C_PORT, SDA_PIN);
-    Delay_us(10);
-    return BitValue;
-}
-
-void I2C_Start(void) {
-	SDA_Write(1);
-	SCL_Write(1);
-	SDA_Write(0);
-	SCL_Write(0);
-}
-
-void I2C_Stop(void) {
-	SDA_Write(0);
-	SCL_Write(1);
-	SDA_Write(1);
-}
-
-void I2C_SendByte(uint8_t Byte) {
-	uint8_t i;
-	for (i = 0; i < 8; i++)
-	{
-		SDA_Write(Byte & (0x80 >> i));
-		SCL_Write(1);
-		SCL_Write(0);
+void I2C_Bus_Init(void) {
+	if (SoftOrHaradWareI2C == 0) {
+		I2C_Software_Init();
+	} else {
+		I2C_Hardware_Init();
 	}
-	SCL_Write(1);	//额外的一个时钟，不处理应答信号
-	SCL_Write(0);
 }
 
-uint8_t I2C_ReceiveByte(void) {
-    uint8_t i;
-    uint8_t Byte = 0x00;
-    SDA_Write(1);
-    for (i = 0; i < 8; i++) {
-        SCL_Write(1);
-        if (SDA_Read() == 1) {
-            Byte |= (0x80 >> i);
-        }
-        SCL_Write(0);
-    }
-    return Byte;
+void I2C_Bus_SendByte(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t pBuffer) {
+	if (SoftOrHaradWareI2C == 0) {
+		I2C_Software_SendByte(SlaveAddr, writeAddr, pBuffer);
+	} else {
+		I2C_Hardware_SendByte(SlaveAddr, writeAddr, pBuffer);
+	}
 }
 
-void I2C_SendAck(uint8_t AckBit) {
-    SDA_Write(AckBit);
-    SCL_Write(1);
-    SCL_Write(0);
+void I2C_Bus_SendArray(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t* pBuffer, uint16_t NumByteToWrite) {
+	if (SoftOrHaradWareI2C == 0) {
+		I2C_Software_SendArray(SlaveAddr, writeAddr, pBuffer, NumByteToWrite);
+	} else {
+		I2C_Hardware_SendArray(SlaveAddr, writeAddr, pBuffer, NumByteToWrite);
+	}
 }
 
-uint8_t I2C_ReceiveAck(void) {
-    uint8_t AckBit;
-    SDA_Write(1);
-    SCL_Write(1);
-    AckBit = SDA_Read();
-    SCL_Write(0);
-    return AckBit;
+uint8_t I2C_Bus_ReadByte(uint8_t SlaveAddr, uint8_t readAddr) {
+	if (SoftOrHaradWareI2C == 0) {
+		return I2C_Software_ReadByte(SlaveAddr, readAddr);
+	} else {
+		return I2C_Hardware_ReadByte(SlaveAddr, readAddr);
+	}
+}
+
+uint8_t I2C_Bus_ReadArray(uint8_t SlaveAddr, uint8_t readAddr, uint8_t* pBuffer, uint16_t NumByteToRead) {
+	uint8_t error = 1;
+	
+	if (SoftOrHaradWareI2C == 0) {
+		I2C_Software_ReadArray(SlaveAddr, readAddr, pBuffer, NumByteToRead);
+	} else {
+		error = I2C_Hardware_ReadArray(SlaveAddr, readAddr, pBuffer, NumByteToRead);
+	}
+	return error;
 }
