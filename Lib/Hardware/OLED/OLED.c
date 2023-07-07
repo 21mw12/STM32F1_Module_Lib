@@ -1,25 +1,7 @@
 #include "OLED.h"
 #include "OLED_Font.h"
 #include "OLED_Instruct.h"
-
-/**
-  * @brief  OLED引脚初始化
-  * @retval 无
-  */
-void OLED_I2C_Init(void) {
-  RCC_APB2PeriphClockCmd(OLED_Periph, ENABLE);
-	
-	GPIO_InitTypeDef GPIO_InitStructure;
- 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Pin = OLED_SCL_PIN;
- 	GPIO_Init(OLED_PORT, &GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin = OLED_SDA_PIN;
- 	GPIO_Init(OLED_PORT, &GPIO_InitStructure);
-	
-	SCL_Write(1);
-	SDA_Write(1);
-}
+#include "i2c.h"
 
 /**
   * @brief  OLED写命令
@@ -27,11 +9,7 @@ void OLED_I2C_Init(void) {
   * @retval 无
   */
 void OLED_WriteCommand(uint8_t Command) {
-	I2C_Start();
-	I2C_SendByte(OLED_ADDRESS);		//从机地址
-	I2C_SendByte(0x00);						//写命令
-	I2C_SendByte(Command); 
-	I2C_Stop();
+	I2C_Bus_SendByte(OLED_ADDRESS, 0x00, Command);
 }
 
 /**
@@ -40,11 +18,7 @@ void OLED_WriteCommand(uint8_t Command) {
   * @retval 无
   */
 void OLED_WriteData(uint8_t Data) {
-	I2C_Start();
-	I2C_SendByte(OLED_ADDRESS);		//从机地址
-	I2C_SendByte(0x40);						//写数据
-	I2C_SendByte(Data);
-	I2C_Stop();
+	I2C_Bus_SendByte(OLED_ADDRESS, 0x40, Data);
 }
 
 /**
@@ -71,15 +45,8 @@ uint32_t Pow(uint32_t a, uint32_t b) {
 	return Result;
 }
 
-void OLED_Init(void) {
-	uint32_t i, j;
-	
-	// 上电延时
-	for (i = 0; i < 1000; i++) {
-		for (j = 0; j < 1000; j++);
-	}
-	
-	OLED_I2C_Init();
+void OLED_Init(void) {	
+	Delay_ms(1000);
 	
 	OLED_WriteCommand(Display_OFF);
 	

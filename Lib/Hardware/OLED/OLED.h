@@ -1,26 +1,20 @@
 #ifndef __OLED_H
 #define __OLED_H
 
-#include "stm32f10x.h"
-#include "i2c.h"
-
 ///////////////////////////////////////////////////////////
 //
 // 文件功能：OLED显示屏基础功能
-// 版本：V1.1
+// 版本：V1.2
 // 作者：墨蔚（MW）
-// 修改时间：2023/4/26
+// 修改时间：2023/07/07
 //
 ///////////////////////////////////////////////////////////
 
+#include "stm32f10x.h"
+#include "delay.h"
+
 /* OLED I2C地址 */
 #define OLED_ADDRESS			0x78
-
-/* OLED引脚配置信息 */
-#define OLED_Periph				RCC_APB2Periph_GPIOB		// 总线时钟
-#define OLED_PORT					GPIOB										// IO端口组
-#define OLED_SCL_PIN 			GPIO_Pin_8							// SCL IO端口
-#define OLED_SDA_PIN 			GPIO_Pin_9							// SDA IO端口
 
 /**
   * @brief  OLED初始化
@@ -110,5 +104,7 @@ void OLED_ShowBinNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Leng
 // V1.1: 2023/04/27
 //				修改了显示多个16*32字符会重叠的bug
 //				修改了16*32中"8"的字符库保证所有字符一样大小
+// V1.2: 2023/07/07
+//				根据重构的I2C库兼容了软硬I2C的切换
 //
 ///////////////////////////////////////////////////////////
