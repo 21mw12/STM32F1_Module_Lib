@@ -13,7 +13,7 @@
 #include "stm32f10x.h"
 #include "delay.h"
 #include "MPU6050_Register.h"
-#include "i2c.h"
+#include "i2c_hardware.h"
 
 extern uint16_t MPU6050_data[5];
 

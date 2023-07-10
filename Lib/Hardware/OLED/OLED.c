@@ -1,7 +1,7 @@
 #include "OLED.h"
 #include "OLED_Font.h"
 #include "OLED_Instruct.h"
-#include "i2c.h"
+#include "i2c_hardware.h"
 
 /**
   * @brief  OLED–¥√¸¡Ó
@@ -9,7 +9,7 @@
   * @retval Œﬁ
   */
 void OLED_WriteCommand(uint8_t Command) {
-	I2C_Bus_SendByte(OLED_ADDRESS, 0x00, Command);
+	I2C_Hardware_SendByte(OLED_ADDRESS, 0x00, Command);
 }
 
 /**
@@ -18,7 +18,7 @@ void OLED_WriteCommand(uint8_t Command) {
   * @retval Œﬁ
   */
 void OLED_WriteData(uint8_t Data) {
-	I2C_Bus_SendByte(OLED_ADDRESS, 0x40, Data);
+	I2C_Hardware_SendByte(OLED_ADDRESS, 0x40, Data);
 }
 
 /**
