@@ -28,7 +28,7 @@
 
 #include "stm32f10x.h"
 
-/* 定时器2的PWM对应通道使能设置 */
+/* 定时器4的PWM对应通道使能设置 */
 /**
   * TIM4共有四个通道，分别是：
 	*			通道1 —— PB6
@@ -44,7 +44,7 @@
 #define TIM4_PWMCHANNEL4_ENABLE   1
 
 /**
-  * @brief 定时器2的PWM功能初始化
+  * @brief 定时器4的PWM功能初始化
   * @param TIM4_ARR 自动重装器的值
   * @param TIM4_PSC 预分频器的值
   * @param TIM4_CCR 反转电平的计数值
@@ -60,34 +60,24 @@ void TIM4_PWM_Init(uint16_t TIM4_ARR, uint16_t TIM4_PSC, uint16_t TIM4_CCR);
 void TIM4_PWM1_SetCompare(uint16_t Compare);
 
 /**
-  * @brief 设置定时器3的PWM通道2的从装载值
+  * @brief 设置定时器4的PWM通道2的从装载值
   * @param Compare 新的重装载值
   * @return 无
   */
 void TIM4_PWM2_SetCompare(uint16_t Compare);
 
 /**
-  * @brief 设置定时器3的PWM通道3的从装载值
+  * @brief 设置定时器4的PWM通道3的从装载值
   * @param Compare 新的重装载值
   * @return 无
   */
 void TIM4_PWM3_SetCompare(uint16_t Compare);
 
 /**
-  * @brief 设置定时器3的PWM通道4的从装载值
+  * @brief 设置定时器4的PWM通道4的从装载值
   * @param Compare 新的重装载值
   * @return 无
   */
 void TIM4_PWM4_SetCompare(uint16_t Compare);
 
 #endif
-
-///////////////////////////////////////////////////////////
-//
-// 更新日志：
-// V1.0: 2023/06/25
-//				实现了PWM的相关功能
-// V1.1: 2023/07/09
-//				进行了定时器功能的重构并将定时器的功能细分
-//
-///////////////////////////////////////////////////////////
