@@ -11,7 +11,7 @@ uint16_t MPU6050_data[5];
   * @retval нч
   */
 void MPU6050_WriteData(uint8_t writeAddr, uint8_t data) {
-	I2C_Hardware_SendByte(MPU6050_ADDRESS, writeAddr, data);
+	I2C1_Hardware_SendByte(MPU6050_ADDRESS, writeAddr, data);
 }
 
 /**
@@ -22,7 +22,7 @@ void MPU6050_WriteData(uint8_t writeAddr, uint8_t data) {
   * @retval нч
   */
 void MPU6050_ReaData(uint8_t writeAddr, uint8_t* dataArray, uint16_t length) {
-	I2C_Hardware_ReadArray(MPU6050_ADDRESS, writeAddr, dataArray, length);
+	I2C1_Hardware_ReadArray(MPU6050_ADDRESS, writeAddr, dataArray, length);
 }
 
 /**

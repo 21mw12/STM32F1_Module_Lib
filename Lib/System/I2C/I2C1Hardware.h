@@ -1,5 +1,5 @@
-#ifndef __I2C_HARDWARE_H
-#define __I2C_HARDWARE_H
+#ifndef __I2C1HARDWARE_H
+#define __I2C1HARDWARE_H
 
 ///////////////////////////////////////////////////////////
 //
@@ -16,24 +16,16 @@
 
 #include "stm32f10x.h"
 
-/* 硬件I2C端口信息 */
-#define I2C_Hardware_GPIOPeriph		RCC_APB2Periph_GPIOB
-#define I2C_Hardware_PORT					GPIOB
-#define I2C_Hardware_SCL_PIN			GPIO_Pin_6
-#define I2C_Hardware_SDA_PIN			GPIO_Pin_7
-
 /* 硬件I2C配置信息 */
-#define I2C_Hardware_Periph				RCC_APB1Periph_I2C1
-#define I2Cx											I2C1
-#define I2C_HostAddress						0x00				// 主机I2C的地址（不得和从机地址重复）
-#define I2C_Speed									200000			// I2C总线速度（I2C功能不能用的时候适当调整该参数）
-#define Timeout										10000				//防卡死计数器的初始值
+#define I2C1_HostAddress						0xCF			// 主机I2C的地址（不得和从机地址重复）
+#define I2C1_Speed									200000		// I2C总线速度（I2C功能不能用的时候适当调整该参数）
+#define I2C1_Timeout								10000			//防卡死计数器的初始值
 
 /**
   * @brief 硬件I2C初始化
   * @return 无
   */
-void I2C_Hardware_Init(void);
+void I2C1_Hardware_Init(void);
 
 /**
   * @brief 硬件I2C发送一个字节
@@ -42,7 +34,7 @@ void I2C_Hardware_Init(void);
   * @param data 数据
   * @return 无
   */
-void I2C_Hardware_SendByte(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t pBuffer);
+void I2C1_Hardware_SendByte(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t pBuffer);
 
 /**
   * @brief 硬件I2C发送一个数组
@@ -52,7 +44,7 @@ void I2C_Hardware_SendByte(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t pBuffer
   * @param length 数据长度（数据数量）
   * @return 无
   */
-void I2C_Hardware_SendArray(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t* pBuffer, u16 NumByteToWrite);
+void I2C1_Hardware_SendArray(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t* pBuffer, u16 NumByteToWrite);
 
 /**
   * @brief 硬件I2C接收一个字节
@@ -60,7 +52,7 @@ void I2C_Hardware_SendArray(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t* pBuff
   * @param reg 读取寄存器
   * @return 读取到的数据
   */
-uint8_t I2C_Hardware_ReadByte(uint8_t SlaveAddr, uint8_t readAddr);
+uint8_t I2C1_Hardware_ReadByte(uint8_t SlaveAddr, uint8_t readAddr);
 
 /**
   * @brief 硬件I2C接收一个数组
@@ -70,6 +62,6 @@ uint8_t I2C_Hardware_ReadByte(uint8_t SlaveAddr, uint8_t readAddr);
   * @param length 数据长度（数据数量）
   * @return 无
   */
-uint8_t I2C_Hardware_ReadArray(uint8_t SlaveAddr, uint8_t readAddr, uint8_t* pBuffer, u16 NumByteToRead);
+uint8_t I2C1_Hardware_ReadArray(uint8_t SlaveAddr, uint8_t readAddr, uint8_t* pBuffer, u16 NumByteToRead);
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef __STM32F10x_I2C_SOFTWARE_H
-#define __STM32F10x_I2C_SOFTWARE_H
+#ifndef __I2C_SOFTWARE_H
+#define __I2C_SOFTWARE_H
 
 #include "stm32f10x.h"
 #include "delay.h"
