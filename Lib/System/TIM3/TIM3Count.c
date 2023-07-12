@@ -37,3 +37,11 @@ void TIM3_ON(void) {
 void TIM3_OFF(void) {
 	TIM_Cmd(TIM3, DISABLE);
 }
+
+uint16_t TIM3_GetCount(void) {
+	return TIM_GetCounter(TIM3);
+}
+
+void TIM3_ClearCount(void) {
+	TIM_SetCounter(TIM3, 0);
+}
