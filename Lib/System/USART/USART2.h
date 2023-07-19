@@ -9,7 +9,7 @@
 // 修改时间：2023/07/11
 //
 // 对应引脚：           	 TX        RX
-//         		USART2		 P9			   PA10
+//         		USART1		 P9			   PA10
 //         		USART2     PA2       PA3
 //         		USART3     PB10      PB11
 //
