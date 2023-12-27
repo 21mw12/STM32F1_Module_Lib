@@ -11,7 +11,7 @@
 
 #include "stm32f10x.h"
 
-#define Image uint8_t
+#define Image const uint8_t
 
 
 // OLED_ShowImg(0, 0, 124, 51, Sakaban);
