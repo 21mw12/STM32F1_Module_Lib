@@ -30,8 +30,8 @@ void SPI_Software_Init(void);
 
 /**
   * @brief SPI交换一个字节（模式0）
-  * @param 
-  * @return 
+  * @param SendByte 要发送的数据
+  * @return 接收到的数据
   */
 uint8_t SPI_Software_SwapByte(uint8_t SendByte);
 
