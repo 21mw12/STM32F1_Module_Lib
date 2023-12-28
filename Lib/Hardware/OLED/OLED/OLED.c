@@ -78,10 +78,10 @@ void OLED_Init(void) {
 }
 
 void OLED_Clear(void) {  
-	uint8_t i, j;
-	for (j = 0; j < 4; j++) {
-		OLED_SetCursor(j, 0);
-		for(i = 0; i < 128; i++) {
+	uint8_t X, Y;
+	for (Y = 0; Y < OLED_Line / 8; Y++) {
+		OLED_SetCursor(0, Y);
+		for(X = 0; X < OLED_Column; X++) {
 			OLED_Write(OLED_ADDRESS, OLED_Data, 0x00);
 		}
 	}
