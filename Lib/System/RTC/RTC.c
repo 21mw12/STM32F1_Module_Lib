@@ -88,3 +88,12 @@ uint8_t RTC_GetSecond(void) {
 uint16_t RTC_GetMiliSecond(void) {
 	return (32767 - RTC_GetDivider()) / 32767.0 * 999;
 }
+
+void RTC_SetAlarmCountDown(uint32_t AlarmValue) {
+	RTC_SetAlarm(RTC_GetCounter() + AlarmValue);
+	RTC_WaitForLastTask();
+}
+
+uint8_t RTC_CheckAlarm(void) {
+	return RTC_GetFlagStatus(RTC_FLAG_ALR);
+}
