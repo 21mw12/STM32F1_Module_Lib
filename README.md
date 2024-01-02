@@ -46,6 +46,7 @@ STM32F1型号单片机在网络上资料最丰富，但依然有部分缺点，�
 - Template：
   - Bare：STM32F1裸机空白工程模板。
   - FreeRTOS：基于FreeRTOS操作系统的STM32F1空白工程模板。
+- Tool：相关工具软件
 
 
 
