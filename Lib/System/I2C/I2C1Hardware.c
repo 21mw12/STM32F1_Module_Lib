@@ -1,4 +1,5 @@
 #include "I2C1Hardware.h"
+#include <stdarg.h>
 
 void I2C1_Hardware_Init(void){
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -22,89 +23,51 @@ void I2C1_Hardware_Init(void){
 	I2C_Cmd(I2C1, ENABLE);
 }
 
-void I2C1_Hardware_SendByte(uint8_t slaveAddr, uint8_t writeAddr, uint8_t pBuffer){
-	I2C_GenerateSTART(I2C1, ENABLE);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
-	I2C_Send7bitAddress(I2C1, slaveAddr, I2C_Direction_Transmitter);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
-	I2C_SendData(I2C1, writeAddr);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-	I2C_SendData(I2C1, pBuffer);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-	I2C_GenerateSTOP(I2C1, ENABLE);
+void I2C1_Hardware_StartSignal(void) {
+	uint32_t To = I2C1_Timeout;
+	
+	while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY)) {if((To--) == 0) return;};	// 等待总线空闲
+	I2C_GenerateSTART(I2C1, ENABLE);		// 发送起始信号
+	To = I2C1_Timeout;
+	while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)) {if((To--) == 0) return;};	// 检测EV5事件
 }
 
-void I2C1_Hardware_SendArray(uint8_t slaveAddr, uint8_t writeAddr, uint8_t* pBuffer, uint16_t NumByteToWrite) {
-	I2C_GenerateSTART(I2C1, ENABLE);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
-	I2C_Send7bitAddress(I2C1, slaveAddr, I2C_Direction_Transmitter);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
-	I2C_SendData(I2C1, writeAddr);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-	
-	while(NumByteToWrite--) {
-		I2C_SendData(I2C1, *pBuffer);
-		pBuffer++;
-			while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-	}
-	I2C_GenerateSTOP(I2C1, ENABLE);
+void I2C1_Hardware_StopSignal(void) {
+	I2C_GenerateSTOP(I2C1, ENABLE);		// 发送停止信号
 }
 
-uint8_t I2C1_Hardware_ReadByte(uint8_t slaveAddr, uint8_t readAddr) {
-	uint8_t data;
+void I2C1_Hardware_SendWriteAddress(uint8_t Address) {
+	uint32_t To = I2C1_Timeout;
 	
-		while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));
-	I2C_GenerateSTART(I2C1, ENABLE);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
-	I2C_Send7bitAddress(I2C1, slaveAddr, I2C_Direction_Transmitter); 
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
-	I2C_Cmd(I2C1, ENABLE);
-	I2C_SendData(I2C1, readAddr);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-	I2C_GenerateSTART(I2C1, ENABLE);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
-	I2C_Send7bitAddress(I2C1, slaveAddr, I2C_Direction_Receiver);
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
+	I2C_Send7bitAddress(I2C1, Address, I2C_Direction_Transmitter);
+	while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {if((To--) == 0) return;};		// 检测EV6事件
+}
+
+void I2C1_Hardware_SendReadAddress(uint8_t Address) {
+	uint32_t To = I2C1_Timeout;
+	
+	I2C_Send7bitAddress(I2C1, Address, I2C_Direction_Receiver);
+	while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) {if((To--) == 0) return;};		// 检测EV6事件
+}
+
+void I2C1_Hardware_SendData(uint8_t Data) {
+	uint32_t To = I2C1_Timeout;
+	
+	I2C_SendData(I2C1, Data);	 // 发送数据
+	while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED)) {if((To--) == 0) return;};		// 检测EV8事件
+}
+
+uint8_t I2C1_Hardware_ReceiveData(void) {
+	uint32_t To = I2C1_Timeout;
+	
+	while (!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_BYTE_RECEIVED)) {if((To--) == 0) return 0;};  //检测EV7事件
+	return I2C_ReceiveData(I2C1);
+}
+
+void I2C1_Hardware_CloseACKSignal(void) {
 	I2C_AcknowledgeConfig(I2C1, DISABLE);
-	I2C_GenerateSTOP(I2C1, ENABLE);
-	data = I2C_ReceiveData(I2C1);
-	
-	return data;
 }
 
-uint8_t I2C1_Hardware_ReadArray(uint8_t slaveAddr, uint8_t readAddr, uint8_t* pBuffer, uint16_t NumByteToRead){ 
-	u32 cou = I2C1_Timeout;
-	
-		while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY)){if((cou--)==0)return 0;}
-	I2C_GenerateSTART(I2C1, ENABLE);
-	cou = I2C1_Timeout;
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)){if((cou--)==0)return 0;}
-	I2C_Send7bitAddress(I2C1, slaveAddr,  I2C_Direction_Transmitter);
-	cou = I2C1_Timeout;
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)){if((cou--)==0)return 0;}
-	I2C_Cmd(I2C1, ENABLE);
-	I2C_SendData(I2C1, readAddr);
-	cou = I2C1_Timeout;
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED)){if((cou--)==0)return 0;}
-	I2C_GenerateSTART(I2C1, ENABLE);
-	cou = I2C1_Timeout;
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)){if((cou--)==0)return 0;}
-	I2C_Send7bitAddress(I2C1, slaveAddr, I2C_Direction_Receiver);
-	cou = I2C1_Timeout;
-		while(!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED)){if((cou--)==0)return 0;}
-	
-	while(NumByteToRead) {
-		if(NumByteToRead == 1) {
-			I2C_AcknowledgeConfig(I2C1, DISABLE);
-			I2C_GenerateSTOP(I2C1, ENABLE);
-		}
-		if(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED)) {
-			*pBuffer = I2C_ReceiveData(I2C1);
-			pBuffer++;
-			NumByteToRead--;
-		}
-	}
-	
-	I2C_AcknowledgeConfig(I2C1, ENABLE);		
-	return 1;
+void I2C1_Hardware_OpenACKSignal(void) {
+	I2C_AcknowledgeConfig(I2C1, ENABLE);
 }

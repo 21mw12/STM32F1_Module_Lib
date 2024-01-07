@@ -4,12 +4,12 @@
 ///////////////////////////////////////////////////////////
 //
 // 文件功能：硬件I2C的基础功能
-// 版本：V1.0
+// 版本：V2.0
 // 作者：墨蔚（MW）
-// 修改时间：2023/07/07
+// 修改时间：2024/01/07
 //
 // 对应引脚：                SCL                 SDA
-//            I2C1    PB6 / PB8(重映射)    PB7 / PB9(重映射)
+//            I2C2    PB6 / PB8(重映射)    PB7 / PB9(重映射)
 //            I2C2          PB10                PB11
 //
 ///////////////////////////////////////////////////////////
@@ -28,40 +28,64 @@
 void I2C2_Hardware_Init(void);
 
 /**
-  * @brief 硬件I2C发送一个字节
-  * @param address 从机地址
-  * @param command 指令
-  * @param data 数据
+  * @brief 硬件I2C2开始信号
   * @return 无
   */
-void I2C2_Hardware_SendByte(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t pBuffer);
+void I2C2_Hardware_StartSignal(void);
 
 /**
-  * @brief 硬件I2C发送一个数组
-  * @param address 从机地址
-  * @param command 指令
-  * @param array 数据数组
-  * @param length 数据长度（数据数量）
+  * @brief 硬件I2C2结束信号
   * @return 无
   */
-void I2C2_Hardware_SendArray(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t* pBuffer, u16 NumByteToWrite);
+void I2C2_Hardware_StopSignal(void);
 
 /**
-  * @brief 硬件I2C接收一个字节
-  * @param address 从机地址
-  * @param reg 读取寄存器
-  * @return 读取到的数据
-  */
-uint8_t I2C2_Hardware_ReadByte(uint8_t SlaveAddr, uint8_t readAddr);
-
-/**
-  * @brief 硬件I2C接收一个数组
-  * @param address 从机地址
-  * @param reg 读取寄存器
-  * @param array 数据数组
-  * @param length 数据长度（数据数量）
+  * @brief 硬件I2C2发送设备写地址
+  * @param Address 从机地址
   * @return 无
   */
-uint8_t I2C2_Hardware_ReadArray(uint8_t SlaveAddr, uint8_t readAddr, uint8_t* pBuffer, u16 NumByteToRead);
+void I2C2_Hardware_SendWriteAddress(uint8_t Address);
+
+/**
+  * @brief 硬件I2C2发送设备读地址
+  * @param Address 从机地址
+  * @return 无
+  */
+void I2C2_Hardware_SendReadAddress(uint8_t Address);
+
+/**
+  * @brief 硬件I2C2发送一字节数据
+  * @param I2CData 发送的数据
+  * @return 无
+  */
+void I2C2_Hardware_SendData(uint8_t Data);
+
+/**
+  * @brief 硬件I2C2接收一字节数据
+  * @return 接收到的数据
+  */
+uint8_t I2C2_Hardware_ReceiveData(void);
+
+/**
+  * @brief 硬件I2C2关闭应答信号
+  * @return 无
+  */
+void I2C2_Hardware_CloseACKSignal(void);
+
+/**
+  * @brief 硬件I2C2打开应答信号
+  * @return 无
+  */
+void I2C2_Hardware_OpenACKSignal(void);
 
 #endif
+
+///////////////////////////////////////////////////////////
+//
+// 更新日志：
+// V1.0: 2023/07/07
+//				实现了硬件IC的基础功能
+// V2.0: 2024/01/07
+//				将I2C的功能原子化，编译代码复用以及兼容更多模块
+//
+///////////////////////////////////////////////////////////

@@ -18,50 +18,74 @@
 
 /* 硬件I2C配置信息 */
 #define I2C1_HostAddress						0xCF			// 主机I2C的地址（不得和从机地址重复）
-#define I2C1_Speed									200000		// I2C总线速度（I2C功能不能用的时候适当调整该参数）
+#define I2C1_Speed									400000		// I2C总线速度（I2C功能不能用的时候适当调整该参数）
 #define I2C1_Timeout								10000			//防卡死计数器的初始值
 
 /**
-  * @brief 硬件I2C初始化
+  * @brief 硬件I2C1初始化
   * @return 无
   */
 void I2C1_Hardware_Init(void);
 
 /**
-  * @brief 硬件I2C发送一个字节
-  * @param address 从机地址
-  * @param command 指令
-  * @param data 数据
+  * @brief 硬件I2C1开始信号
   * @return 无
   */
-void I2C1_Hardware_SendByte(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t pBuffer);
+void I2C1_Hardware_StartSignal(void);
 
 /**
-  * @brief 硬件I2C发送一个数组
-  * @param address 从机地址
-  * @param command 指令
-  * @param array 数据数组
-  * @param length 数据长度（数据数量）
+  * @brief 硬件I2C1结束信号
   * @return 无
   */
-void I2C1_Hardware_SendArray(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t* pBuffer, u16 NumByteToWrite);
+void I2C1_Hardware_StopSignal(void);
 
 /**
-  * @brief 硬件I2C接收一个字节
-  * @param address 从机地址
-  * @param reg 读取寄存器
-  * @return 读取到的数据
-  */
-uint8_t I2C1_Hardware_ReadByte(uint8_t SlaveAddr, uint8_t readAddr);
-
-/**
-  * @brief 硬件I2C接收一个数组
-  * @param address 从机地址
-  * @param reg 读取寄存器
-  * @param array 数据数组
-  * @param length 数据长度（数据数量）
+  * @brief 硬件I2C1发送设备写地址
+  * @param Address 从机地址
   * @return 无
   */
-uint8_t I2C1_Hardware_ReadArray(uint8_t SlaveAddr, uint8_t readAddr, uint8_t* pBuffer, u16 NumByteToRead);
+void I2C1_Hardware_SendWriteAddress(uint8_t Address);
+
+/**
+  * @brief 硬件I2C1发送设备读地址
+  * @param Address 从机地址
+  * @return 无
+  */
+void I2C1_Hardware_SendReadAddress(uint8_t Address);
+
+/**
+  * @brief 硬件I2C1发送一字节数据
+  * @param I2CData 发送的数据
+  * @return 无
+  */
+void I2C1_Hardware_SendData(uint8_t Data);
+
+/**
+  * @brief 硬件I2C1接收一字节数据
+  * @return 接收到的数据
+  */
+uint8_t I2C1_Hardware_ReceiveData(void);
+
+/**
+  * @brief 硬件I2C1关闭应答信号
+  * @return 无
+  */
+void I2C1_Hardware_CloseACKSignal(void);
+
+/**
+  * @brief 硬件I2C1打开应答信号
+  * @return 无
+  */
+void I2C1_Hardware_OpenACKSignal(void);
 
 #endif
+
+///////////////////////////////////////////////////////////
+//
+// 更新日志：
+// V1.0: 2023/07/07
+//				实现了硬件IC的基础功能
+// V2.0: 2024/01/06
+//				将I2C的功能原子化，编译代码复用以及兼容更多模块
+//
+///////////////////////////////////////////////////////////
