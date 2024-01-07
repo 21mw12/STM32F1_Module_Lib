@@ -6,6 +6,16 @@
 
 uint8_t GARM[OLED_GRAM_Size];
 
+void OLED_Write(uint8_t ComType, uint8_t Data) {
+	I2C1_Hardware_StartSignal();
+	
+	I2C1_Hardware_SendWriteAddress(OLED_ADDRESS);
+	I2C1_Hardware_SendData(ComType);
+	I2C1_Hardware_SendData(Data);
+	
+	I2C1_Hardware_StopSignal();
+}
+
 /**
   * @brief  OLED设置光标位置
   * @param  Y 以左上角为原点，向下方向的坐标，范围：0~7
@@ -13,54 +23,54 @@ uint8_t GARM[OLED_GRAM_Size];
   * @retval 无
   */
 void OLED_SetCursor(uint8_t X,uint8_t Y) {
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0xB0 | Y);					//设置Y位置
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0x10 | ((X & 0xF0) >> 4));	//设置X位置低4位
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0x00 | (X & 0x0F));			//设置X位置高4位
+	OLED_Write(OLED_Command, 0xB0 | Y);					//设置Y位置
+	OLED_Write(OLED_Command, 0x10 | ((X & 0xF0) >> 4));	//设置X位置低4位
+	OLED_Write(OLED_Command, 0x00 | (X & 0x0F));			//设置X位置高4位
 }
 
 
 void OLED_GLib_Init(void) {
 	Delay_ms(1000);
 	
-	OLED_Write(OLED_ADDRESS, OLED_Command, Display_OFF);
+	OLED_Write(OLED_Command, Display_OFF);
 	
 	/* 默认配置 */
-	OLED_Write(OLED_ADDRESS, OLED_Command, Set_Display_RefreshRate);
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0xF0);
-	OLED_Write(OLED_ADDRESS, OLED_Command, Set_Display_Multiplexing);
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0x3F);
-	OLED_Write(OLED_ADDRESS, OLED_Command, Set_Display_Skew);			// 设置显示偏移
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0x00);
-	OLED_Write(OLED_ADDRESS, OLED_Command, Display_Start_Line);		// 设置显示开始行
-	OLED_Write(OLED_ADDRESS, OLED_Command, Set_Display_ChargingCycle);
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0xF1);
-	OLED_Write(OLED_ADDRESS, OLED_Command, Set_Display_VCOMH);
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0x30);
-	OLED_Write(OLED_ADDRESS, OLED_Command, Set_Display_ChargePump);
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0x14);
-	OLED_Write(OLED_ADDRESS, OLED_Command, Display_VideoMemory_ON);
+	OLED_Write(OLED_Command, Set_Display_RefreshRate);
+	OLED_Write(OLED_Command, 0xF0);
+	OLED_Write(OLED_Command, Set_Display_Multiplexing);
+	OLED_Write(OLED_Command, 0x3F);
+	OLED_Write(OLED_Command, Set_Display_Skew);			// 设置显示偏移
+	OLED_Write(OLED_Command, 0x00);
+	OLED_Write(OLED_Command, Display_Start_Line);		// 设置显示开始行
+	OLED_Write(OLED_Command, Set_Display_ChargingCycle);
+	OLED_Write(OLED_Command, 0xF1);
+	OLED_Write(OLED_Command, Set_Display_VCOMH);
+	OLED_Write(OLED_Command, 0x30);
+	OLED_Write(OLED_Command, Set_Display_ChargePump);
+	OLED_Write(OLED_Command, 0x14);
+	OLED_Write(OLED_Command, Display_VideoMemory_ON);
 	
 	/* 默认设置 */
-	OLED_Write(OLED_ADDRESS, OLED_Command, Set_Display_Luminance);	// 设置亮度值（范围：0x00 ~ 0xFF）
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0x7F);;
-	OLED_Write(OLED_ADDRESS, OLED_Command, Display_Left_Right_Nomal);// 设置显示上下左右模式
-	OLED_Write(OLED_ADDRESS, OLED_Command, Display_Up_Down_Nomal);
-	OLED_Write(OLED_ADDRESS, OLED_Command, Display_Color_Nomal);		// 设置屏幕是否反色
+	OLED_Write(OLED_Command, Set_Display_Luminance);	// 设置亮度值（范围：0x00 ~ 0xFF）
+	OLED_Write(OLED_Command, 0x7F);;
+	OLED_Write(OLED_Command, Display_Left_Right_Nomal);// 设置显示上下左右模式
+	OLED_Write(OLED_Command, Display_Up_Down_Nomal);
+	OLED_Write(OLED_Command, Display_Color_Nomal);		// 设置屏幕是否反色
 	
 	/* 设置显存地址模式 */
 	// 0x00 -	水平地址模式 ("之"字型)
 	// 0x01 - 垂直地址模式 （"N"型）
 	// 0x02 - 页地址模式 (按行顺序排列)
-	OLED_Write(OLED_ADDRESS, OLED_Command, Display_SetAddressPattern);
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0x00);
+	OLED_Write(OLED_Command, Display_SetAddressPattern);
+	OLED_Write(OLED_Command, 0x00);
 	
 	/* 设置列引脚 */
 	// 0x02 - 分辨率为128*32（0.91寸）
 	// 0x12 - 分辨率为128*64（0.96寸）
-	OLED_Write(OLED_ADDRESS, OLED_Command, Set_Display_ColumnPinConfig);
-	OLED_Write(OLED_ADDRESS, OLED_Command, 0x12);
+	OLED_Write(OLED_Command, Set_Display_ColumnPinConfig);
+	OLED_Write(OLED_Command, 0x12);
 	
-	OLED_Write(OLED_ADDRESS, OLED_Command, Display_ON);
+	OLED_Write(OLED_Command, Display_ON);
 	
 	for (uint16_t i = 0; i < OLED_GRAM_Size; i++) {
 		GARM[i] = 0x00;
@@ -74,7 +84,7 @@ void OLED_RefreshRam(void) {
 		OLED_SetCursor(0, Y);
 		
 		for (uint8_t X = 0; X < OLED_Column; X++) {
-			OLED_Write(OLED_ADDRESS, OLED_Data, GARM[k++]);
+			OLED_Write(OLED_Data, GARM[k++]);
 		}
 	}
 }
@@ -94,7 +104,7 @@ void OLED_RefreshRamPart(uint8_t X_start, uint8_t Y_start, uint8_t X_length, uin
 		index = Y * OLED_Column + X_start;
 		
 		for (uint8_t X = 0; X < X_length; X++) {
-			OLED_Write(OLED_ADDRESS, OLED_Data, GARM[index + X]);
+			OLED_Write(OLED_Data, GARM[index + X]);
 		}
 	}
 }
@@ -105,7 +115,7 @@ void OLED_RamClear(void) {
 	for (uint8_t Y = 0; Y < OLED_Line / 8; Y++) {
 		OLED_SetCursor(0, Y);
 		for(uint8_t X = 0; X < OLED_Column; X++) {
-			OLED_Write(OLED_ADDRESS, OLED_Data, 0x00);
+			OLED_Write(OLED_Data, 0x00);
 			GARM[k++] = 0x00;
 		}
 	}
