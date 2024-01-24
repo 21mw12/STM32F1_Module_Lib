@@ -12,13 +12,10 @@
 //
 ///////////////////////////////////////////////////////////
 
-/* DHT11数据精度 */
-#define DHT11_Data_Accurate		1
-
 /* DHT11引脚配置信息 */
 #define DHT11_Periph		RCC_APB2Periph_GPIOA		// 总线时钟
-#define DHT11_PORT			GPIOA										// IO端口组
-#define DHT11_PIN 			GPIO_Pin_11							// IO端口
+#define DHT11_Port			GPIOA										// IO端口组
+#define DHT11_Pin 			GPIO_Pin_11							// IO端口
 
 /**
   * @brief 温湿传感器初始化
@@ -34,7 +31,7 @@ uint8_t DHT11_Init(void);
   * @return 数据接收状态		0：失败 
 	* 											1：正常
   */
-uint8_t DHT11_ReadData(uint8_t *temp, uint8_t *humi);
+uint8_t DHT11_ReadData(uint8_t *Temp, uint8_t *Hum);
 
 #endif
 

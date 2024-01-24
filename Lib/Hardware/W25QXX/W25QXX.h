@@ -13,15 +13,11 @@
 ///////////////////////////////////////////////////////////
 
 #include "stm32f10x.h"
-#include "SPISoftware.h"
 
 /* W25QXX芯片端口信息 */
 #define W25QXX_GPIOPeriph		RCC_APB2Periph_GPIOA
-#define W25QXX_PORT					GPIOA
-#define W25QXX_CS_PIN				GPIO_Pin_4
-
-/* W25QXX修改底层SPI依赖时需要修改为对应的函数 */
-#define W25QXX_SwapByte			SPI_Software_SwapByte
+#define W25QXX_Port					GPIOA
+#define W25QXX_Pin_CS				GPIO_Pin_4
 
 /**
   * @brief W25QXX系列芯片初始化

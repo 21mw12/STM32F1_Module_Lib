@@ -1,35 +1,35 @@
 #include "PID_Incremental.h"
 
-void PID_Incremental_Init(PID_Incremental_Struct* PID_Struct, float Kp, float Ki, float Kd) {
-	PID_Struct->Kp = Kp;
-	PID_Struct->Ki = Ki;
-	PID_Struct->Kd = Kd;
+void PID_Incremental_Init(PID_Incremental_Struct* pid, float Kp, float Ki, float Kd) {
+	pid->Kp = Kp;
+	pid->Ki = Ki;
+	pid->Kd = Kd;
 	
-	PID_Struct->err = 0.0;
-	PID_Struct->err_last = 0.0;
-	PID_Struct->err_pass = 0.0;
+	pid->err = 0.0;
+	pid->err_last = 0.0;
+	pid->err_pass = 0.0;
 	
-	PID_Struct->target = 0.0;
+	pid->target = 0.0;
 }
 
-void PID_Incremental_SetTarget(PID_Incremental_Struct* PID_Struct, float newTarget) {
-	PID_Struct->target = newTarget;
+void PID_Incremental_SetTarget(PID_Incremental_Struct* pid, float newTarget) {
+	pid->target = newTarget;
 }
 
-float PID_Incremental_Calculate(PID_Incremental_Struct* PID_Struct, float nowValue) {
+float PID_Incremental_Calculate(PID_Incremental_Struct* pid, float nowValue) {
 	float Increment = 0.0;
 
-	// 计算本次误差
-	PID_Struct->err = PID_Struct->target - nowValue;
+	/* 计算本次误差 */
+	pid->err = pid->target - nowValue;
 
-	// PID计算
-	Increment = PID_Struct->Kp * (PID_Struct->err - PID_Struct->err_last) + 
-							PID_Struct->Ki * PID_Struct->err + 
-							PID_Struct->Kd * (PID_Struct->err - 2 * PID_Struct->err_last + PID_Struct->err_pass);
+	/* PID计算 */
+	Increment = pid->Kp * (pid->err - pid->err_last) + 
+							pid->Ki * pid->err + 
+							pid->Kd * (pid->err - 2 * pid->err_last + pid->err_pass);
 
-	// 传递误差
-	PID_Struct->err_pass = PID_Struct->err_last;
-	PID_Struct->err_last = PID_Struct->err;
+	/* 传递误差 */
+	pid->err_pass = pid->err_last;
+	pid->err_last = pid->err;
 	
 	return Increment;
 }

@@ -1,13 +1,13 @@
 #include "KLM.h"
 
-void KLM_Struct_Init(KLM_Struct* klm, float Q_Set, float R_Set) {
+void KLM_Struct_Init(KLM_Struct* klm, float QSet, float RSet) {
 	klm->P = 1;
 	klm->P_ = 0;
 	klm->X = 1;
 	klm->X_ = 0;
 	klm->K = 0;
-	klm->Q = Q_Set;
-	klm->R = R_Set;
+	klm->Q = QSet;
+	klm->R = RSet;
 }
 
 float KalmanFilter(KLM_Struct* klm, float Z) {

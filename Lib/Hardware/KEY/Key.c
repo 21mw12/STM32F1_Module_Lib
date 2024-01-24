@@ -6,9 +6,9 @@
 		
 		GPIO_InitTypeDef GPIO_InitStructure;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-		GPIO_InitStructure.GPIO_Pin = Key_PIN;
+		GPIO_InitStructure.GPIO_Pin = Key_Pin;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-		GPIO_Init(Key_PORT, &GPIO_InitStructure);
+		GPIO_Init(Key_Port, &GPIO_InitStructure);
 		
 		RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 		GPIO_EXTILineConfig(Key_PortSource, Key_PinSource);
@@ -38,15 +38,15 @@
 		
 		GPIO_InitTypeDef GPIO_InitStructure;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-		GPIO_InitStructure.GPIO_Pin = Key_PIN;
+		GPIO_InitStructure.GPIO_Pin = Key_Pin;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-		GPIO_Init(Key_PORT, &GPIO_InitStructure);			
+		GPIO_Init(Key_Port, &GPIO_InitStructure);			
 	}
 
 	uint8_t Key_Get(void) {
-		if (GPIO_ReadInputDataBit(Key_PORT, Key_PIN) == 0) {
+		if (GPIO_ReadInputDataBit(Key_Port, Key_Pin) == 0) {
 			Delay_ms(20);
-			while (GPIO_ReadInputDataBit(Key_PORT, Key_PIN) == 0);
+			while (GPIO_ReadInputDataBit(Key_Port, Key_Pin) == 0);
 			Delay_ms(20);
 			return 1;
 		}

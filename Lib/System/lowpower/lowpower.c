@@ -1,4 +1,4 @@
-#include "lowpower.h"
+#include "LOWPOWER.h"
 
 void LowerPower_Init(void) {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);

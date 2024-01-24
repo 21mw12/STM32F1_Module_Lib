@@ -7,10 +7,10 @@
   */
 void DHT11_IO_OUT (void){
 	GPIO_InitTypeDef GPIO_InitStructure; 	
-  GPIO_InitStructure.GPIO_Pin = DHT11_PIN;
+  GPIO_InitStructure.GPIO_Pin = DHT11_Pin 
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(DHT11_PORT, &GPIO_InitStructure);
+	GPIO_Init(DHT11_Port, &GPIO_InitStructure);
 }
 
 /**
@@ -19,9 +19,9 @@ void DHT11_IO_OUT (void){
   */
 void DHT11_IO_IN (void) {
 	GPIO_InitTypeDef GPIO_InitStructure; 	
-  GPIO_InitStructure.GPIO_Pin = DHT11_PIN;
+  GPIO_InitStructure.GPIO_Pin = DHT11_Pin;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-	GPIO_Init(DHT11_PORT, &GPIO_InitStructure);
+	GPIO_Init(DHT11_Port, &GPIO_InitStructure);
 }
 
 /**
@@ -31,12 +31,10 @@ void DHT11_IO_IN (void) {
 void DHT11_RST(void) {
 	DHT11_IO_OUT();
 	
-	GPIO_ResetBits(DHT11_PORT, DHT11_PIN);
-	// 拉低至少18ms
-	Delay_ms(20);
-	GPIO_SetBits(DHT11_PORT, DHT11_PIN);
-	// 主机拉高20~40us
-	Delay_us(30);
+	GPIO_ResetBits(DHT11_Port, DHT11_Pin);
+	Delay_ms(20);	// 拉低至少18ms
+	GPIO_SetBits(DHT11_Port, DHT11_Pin);
+	Delay_us(30);	// 主机拉高20~40us
 }
 
 /**
@@ -48,8 +46,7 @@ uint8_t DHT11_Check(void){
     uint8_t timeout = 0;
     DHT11_IO_IN();
 
-		// DHT11会拉低40~80us
-    while(GPIO_ReadInputDataBit(DHT11_PORT, DHT11_PIN) && timeout < 100) {
+    while(GPIO_ReadInputDataBit(DHT11_Port, DHT11_Pin) && timeout < 100) {	// DHT11会拉低40~80us
         timeout++;
         Delay_us(1);
     }
@@ -58,9 +55,8 @@ uint8_t DHT11_Check(void){
 			return 0;
 		}
 		
-		// DHT11拉低后会再次拉高40~80us
 		timeout = 0;
-    while(!GPIO_ReadInputDataBit(DHT11_PORT, DHT11_PIN) && timeout < 100) {
+    while(!GPIO_ReadInputDataBit(DHT11_Port, DHT11_Pin) && timeout < 100) {	// DHT11拉低后会再次拉高40~80us
         timeout++;
         Delay_us(1);
     }
@@ -79,23 +75,20 @@ uint8_t DHT11_Check(void){
 uint8_t DHT11_ReadBit(void){
 	uint8_t timeout=0;
 
-	// 等待变为低电平
-	while(GPIO_ReadInputDataBit(DHT11_PORT, DHT11_PIN) && timeout < 100) {
+	while(GPIO_ReadInputDataBit(DHT11_Port, DHT11_Pin) && timeout < 100) {	// 等待变为低电平
 			timeout++;
 			Delay_us(1);
 	}
 	
-	// 等待变高电平
 	timeout=0;
-	while(!GPIO_ReadInputDataBit(DHT11_PORT, DHT11_PIN) && timeout < 100){
+	while(!GPIO_ReadInputDataBit(DHT11_Port, DHT11_Pin) && timeout < 100){	// 等待变高电平
 			timeout++;
 			Delay_us(1);
 	}
 	
-	//等待40us
-	Delay_us(40);
+	Delay_us(40);// 等待40us
 	
-	return GPIO_ReadInputDataBit(DHT11_PORT, DHT11_PIN);   
+	return GPIO_ReadInputDataBit(DHT11_Port, DHT11_Pin);   
 }
 
 /**
@@ -120,20 +113,20 @@ uint8_t DHT11_Init (void) {
 	return DHT11_Check();
 }
 
-uint8_t DHT11_ReadData(uint8_t *temp, uint8_t *humi){
+uint8_t DHT11_ReadData(uint8_t *Temp, uint8_t *Hum){
 	uint8_t i;
 	uint8_t	buf[5];
 	
-	// DHT11端口复位，发出起始信号
-	DHT11_RST();
-  // 等待DHT11回应
-	if(DHT11_Check()){
+	DHT11_RST();	// DHT11端口复位，发出起始信号
+
+	if(DHT11_Check()){	// 等待DHT11回应
 		for(i = 0; i < 5; i++){
 			buf[i] = DHT11_ReadByte();
 		}
-		if((buf[0] + buf[1] + buf[2] + buf[3]) == buf[4]){	//数据校验
-			*humi = buf[0];
-			*temp = buf[2];
+		/* 数据校验 */
+		if((buf[0] + buf[1] + buf[2] + buf[3]) == buf[4]){	
+			*Hum = buf[0];
+			*Temp = buf[2];
 		}
 	} else {
 		return 0;

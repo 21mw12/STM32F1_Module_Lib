@@ -12,7 +12,7 @@
   * @retval нч
   */
 void SCL_Write(uint8_t state) {
-	GPIO_WriteBit(I2C_Software_PORT, I2C_Software_SCL_PIN, (BitAction)state);
+	GPIO_WriteBit(I2C_Software_Port, I2C_Software_Pin_SCL, (BitAction)state);
 }
 
 /**
@@ -21,7 +21,7 @@ void SCL_Write(uint8_t state) {
   * @retval нч
   */
 void SDA_Write(uint8_t state) {
-	GPIO_WriteBit(I2C_Software_PORT, I2C_Software_SDA_PIN, (BitAction)state);
+	GPIO_WriteBit(I2C_Software_Port, I2C_Software_Pin_SDA, (BitAction)state);
 }
 
 /**
@@ -30,7 +30,7 @@ void SDA_Write(uint8_t state) {
   */
 uint8_t SDA_Read(void) {
     uint8_t BitValue;
-    BitValue = GPIO_ReadInputDataBit(I2C_Software_PORT, I2C_Software_SDA_PIN);
+    BitValue = GPIO_ReadInputDataBit(I2C_Software_Port, I2C_Software_Pin_SDA);
     Delay_us(10);
     return BitValue;
 }
@@ -129,10 +129,10 @@ void I2C_Software_Init(void) {
   RCC_APB2PeriphClockCmd(I2C_Software_GPIOPeriph, ENABLE);
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_InitStructure.GPIO_Pin = I2C_Software_SCL_PIN | I2C_Software_SDA_PIN;
+	GPIO_InitStructure.GPIO_Pin = I2C_Software_Pin_SCL | I2C_Software_Pin_SDA;
  	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
- 	GPIO_Init(I2C_Software_PORT, &GPIO_InitStructure);
+ 	GPIO_Init(I2C_Software_Port, &GPIO_InitStructure);
 	
 	SCL_Write(1);
 	SDA_Write(1);

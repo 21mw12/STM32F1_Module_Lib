@@ -1,5 +1,5 @@
 #include "AHT10.h"
-#include "delay.h"
+#include "Delay.h"
 #include "I2C1Hardware.h"
 
 void AHT10_Init(void) {

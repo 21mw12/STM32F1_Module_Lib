@@ -15,9 +15,9 @@
 
 /* 软件I2C端口信息 */
 #define I2C_Software_GPIOPeriph		RCC_APB2Periph_GPIOB
-#define I2C_Software_PORT					GPIOB
-#define I2C_Software_SCL_PIN			GPIO_Pin_8
-#define I2C_Software_SDA_PIN			GPIO_Pin_9
+#define I2C_Software_Port					GPIOB
+#define I2C_Software_Pin_SCL			GPIO_Pin_8
+#define I2C_Software_Pin_SDA			GPIO_Pin_9
 
 /**
   * @brief 软件I2C初始化

@@ -1,9 +1,6 @@
 #ifndef __SPI_SOFTWARE_H
 #define __SPI_SOFTWARE_H
 
-#include "stm32f10x.h"
-#include "delay.h"
-
 ///////////////////////////////////////////////////////////
 //
 // 文件功能：软件模拟SPI的基础功能
@@ -15,12 +12,14 @@
 //
 ///////////////////////////////////////////////////////////
 
+#include "stm32f10x.h"
+
 /* 软件SPI端口信息 */
 #define SPI_Software_GPIOPeriph		RCC_APB2Periph_GPIOA
-#define SPI_Software_PORT					GPIOA
-#define SPI_Software_CLK_PIN			GPIO_Pin_5
-#define SPI_Software_MISO_PIN			GPIO_Pin_6
-#define SPI_Software_MOSI_PIN			GPIO_Pin_7
+#define SPI_Software_Port					GPIOA
+#define SPI_Software_Pin_CLK			GPIO_Pin_5
+#define SPI_Software_Pin_MISO			GPIO_Pin_6
+#define SPI_Software_Pin_MOSI			GPIO_Pin_7
 
 /**
   * @brief 软件SPI初始化

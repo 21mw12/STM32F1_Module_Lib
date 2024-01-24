@@ -14,9 +14,9 @@
 
 /* 旋转编码器配置信息 */
 #define Encoder_Periph		RCC_APB2Periph_GPIOA		// 总线时钟
-#define Encoder_PORT			GPIOA										// IO端口组
-#define Encoder_A_PIN 		GPIO_Pin_6							// A相IO端口
-#define Encoder_B_PIN 		GPIO_Pin_7							// B相IO端口
+#define Encoder_Port			GPIOA										// IO端口组
+#define Encoder_A_Pin 		GPIO_Pin_6							// A相IO端口
+#define Encoder_B_Pin 		GPIO_Pin_7							// B相IO端口
 
 #define Encoder_TIM				TIM3					// 定时器
 #define Encoder_TIM_Periph			RCC_APB1Periph_TIM3			// 定时器时钟线

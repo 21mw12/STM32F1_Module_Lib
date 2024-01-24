@@ -11,15 +11,14 @@
 ///////////////////////////////////////////////////////////
 
 #include "stm32f10x.h"
-#include "delay.h"
 
 /* LED引脚状态：0表示高电平点亮，1表示低电平点亮 */
-#define LED_PIN_STATE		0
+#define LED_Pin_State		0
 
 /* LED引脚配置信息 */
 #define LED_Periph		RCC_APB2Periph_GPIOC		// 总线时钟
-#define LED_PORT			GPIOC										// IO端口组
-#define LED_PIN 			GPIO_Pin_13							// IO端口
+#define LED_Port			GPIOC										// IO端口组
+#define LED_Pin 			GPIO_Pin_13							// IO端口
 
 /**
   * @brief LED初始化

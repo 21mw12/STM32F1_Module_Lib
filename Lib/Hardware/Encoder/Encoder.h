@@ -8,17 +8,18 @@
 // 作者：墨蔚（MW）
 // 修改时间：2023/05/06
 //
-// 编码器计数参数：如果想在其他地方使用则使用“extern int8_t Encoder_Count;”即可！！！
-//
 ///////////////////////////////////////////////////////////
 
 #include "stm32f10x.h"
 
+/* 旋转编码器当前计数值 */
+extern int8_t Encoder_Count;
+
 /* 旋转编码器配置信息 */
 #define Encoder_Periph		RCC_APB2Periph_GPIOB		// 总线时钟
-#define Encoder_PORT			GPIOB										// IO端口组
-#define Encoder_A_PIN 		GPIO_Pin_0							// A相IO端口
-#define Encoder_B_PIN 		GPIO_Pin_1							// B相IO端口
+#define Encoder_Port			GPIOB										// IO端口组
+#define Encoder_A_Pin 		GPIO_Pin_0							// A相IO端口
+#define Encoder_B_Pin 		GPIO_Pin_1							// B相IO端口
 
 #define Encoder_PortSource			GPIO_PortSourceGPIOB		// 中断源IO端口组
 #define Encoder_A_PinSource 		GPIO_PinSource0					// 中断源IO端口

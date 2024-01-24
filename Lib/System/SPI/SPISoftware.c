@@ -1,10 +1,5 @@
 #include "SPISoftware.h"
-
-///////////////////////////////////////////////////////////
-//
-// SPI基础时序实现
-//
-///////////////////////////////////////////////////////////
+#include "Delay.h"
 
 /**
   * @brief  CLK写数据
@@ -12,7 +7,7 @@
   * @retval 无
   */
 void SPI_CLK_Write(uint8_t state) {
-	GPIO_WriteBit(SPI_Software_PORT, SPI_Software_CLK_PIN, (BitAction)state);
+	GPIO_WriteBit(SPI_Software_Port, SPI_Software_Pin_CLK, (BitAction)state);
 }
 
 /**
@@ -21,7 +16,7 @@ void SPI_CLK_Write(uint8_t state) {
   * @retval 无
   */
 void SPI_MOSI_Write(uint8_t state) {
-	GPIO_WriteBit(SPI_Software_PORT, SPI_Software_MOSI_PIN, (BitAction)state);
+	GPIO_WriteBit(SPI_Software_Port, SPI_Software_Pin_MOSI, (BitAction)state);
 }
 
 /**
@@ -29,28 +24,22 @@ void SPI_MOSI_Write(uint8_t state) {
   * @retval 读取到的数据
   */
 uint8_t SPI_MISO_Read(void) {
-	return GPIO_ReadInputDataBit(SPI_Software_PORT, SPI_Software_MISO_PIN);
+	return GPIO_ReadInputDataBit(SPI_Software_Port, SPI_Software_Pin_MISO);
 }
-
-///////////////////////////////////////////////////////////
-//
-// SPI基础功能实现
-//
-///////////////////////////////////////////////////////////
 
 void SPI_Software_Init(void) {
   RCC_APB2PeriphClockCmd(SPI_Software_GPIOPeriph, ENABLE);
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_InitStructure.GPIO_Pin = SPI_Software_CLK_PIN | SPI_Software_MOSI_PIN;
+	GPIO_InitStructure.GPIO_Pin = SPI_Software_Pin_CLK | SPI_Software_Pin_MOSI;
  	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
- 	GPIO_Init(SPI_Software_PORT, &GPIO_InitStructure);
+ 	GPIO_Init(SPI_Software_Port, &GPIO_InitStructure);
 	
-	GPIO_InitStructure.GPIO_Pin = SPI_Software_MISO_PIN;
+	GPIO_InitStructure.GPIO_Pin = SPI_Software_Pin_MISO;
  	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
- 	GPIO_Init(SPI_Software_PORT, &GPIO_InitStructure);
+ 	GPIO_Init(SPI_Software_Port, &GPIO_InitStructure);
 	
 	SPI_CLK_Write(1);
 }

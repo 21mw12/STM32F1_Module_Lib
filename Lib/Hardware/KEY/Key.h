@@ -17,10 +17,14 @@
 
 /* 按键引脚配置信息 */
 #define Key_Periph		RCC_APB2Periph_GPIOB		// 总线时钟
-#define Key_PORT			GPIOB										// IO端口组
-#define Key_PIN 			GPIO_Pin_1							// IO端口
+#define Key_Port			GPIOB										// IO端口组
+#define Key_Pin 			GPIO_Pin_1							// IO端口
 
-/* 是否启用按键中断 */
+/**
+  * 是否启用按键中断
+  * 1：表示开启，需要编写对应的中断处理函数（函数定义的下面）
+  * 0：表示关闭，调用读取函数获取按键状态
+  */
 #define Key_Interrupt      1
 
 /* 按键中断配置 */
@@ -35,8 +39,7 @@
   */
 void Key_Init(void);
 
-// 中断模式下不存在该函数，使用中断函数进行操作
-#if !Key_Interrupt
+#if Key_Interrupt == 0
 /**
   * @brief 按键初始化
   * @return 按键是否被按下	0：没有按下	1：有按下
@@ -49,7 +52,7 @@ uint8_t Key_Get(void);
 //	if (EXTI_GetITStatus(Key_EXTI_Line) == SET){
 //		// 按键消抖
 //		Delay_ms(20);
-//		while (GPIO_ReadInputDataBit(Key_PORT, Key_PIN) == 0);
+//		while (GPIO_ReadInputDataBit(Key_Port, Key_Pin) == 0);
 //		Delay_ms(20);
 //		
 //		/**

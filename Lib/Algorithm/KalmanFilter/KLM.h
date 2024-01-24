@@ -10,8 +10,6 @@
 //
 ///////////////////////////////////////////////////////////
 
-#include "stm32f10x.h"
-
 /**
 	* 解释：
 	* 	Q表示的是噪音。
@@ -40,7 +38,7 @@ typedef struct {
   * @param R_Set 测量的协方差矩阵
   * @return 无
   */
-void KLM_Struct_Init(KLM_Struct* klm, float Q_Set, float R_Set);
+void KLM_Struct_Init(KLM_Struct* klm, float QSet, float RSet);
 
 /**
   * @brief 卡尔曼滤波器计算

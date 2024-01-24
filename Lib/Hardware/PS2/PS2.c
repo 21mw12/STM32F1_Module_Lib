@@ -2,10 +2,10 @@
 #include "delay.h"
 #include "PS2_Instruct.h"
 
-#define PS2_DAT_Read()					GPIO_ReadInputDataBit(PS2_PORT, PS2_DAT_PIN)
-#define PS2_CMD_Write(state)		GPIO_WriteBit(PS2_PORT, PS2_CMD_PIN, (BitAction)state)
-#define PS2_CS_Write(state)			GPIO_WriteBit(PS2_PORT, PS2_CS_PIN, (BitAction)state)
-#define PS2_CLK_Write(state)		GPIO_WriteBit(PS2_PORT, PS2_CLK_PIN, (BitAction)state)
+#define PS2_DAT_Read()					GPIO_ReadInputDataBit(PS2_Port, PS2_Pin_DAT)
+#define PS2_CMD_Write(state)		GPIO_WriteBit(PS2_Port, PS2_Pin_CMD, (BitAction)state)
+#define PS2_CS_Write(state)			GPIO_WriteBit(PS2_Port, PS2_Pin_CS, (BitAction)state)
+#define PS2_CLK_Write(state)		GPIO_WriteBit(PS2_Port, PS2_Pin_CLK, (BitAction)state)
 
 uint16_t Handkey;
 
@@ -15,14 +15,14 @@ void PS2_Init(void) {
 	RCC_APB2PeriphClockCmd(PS2_Periph, ENABLE);
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_InitStructure.GPIO_Pin = PS2_CMD_PIN | PS2_CS_PIN | PS2_CLK_PIN;
+	GPIO_InitStructure.GPIO_Pin = PS2_Pin_CMD | PS2_Pin_CS | PS2_Pin_CLK;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(PS2_PORT, &GPIO_InitStructure);
+	GPIO_Init(PS2_Port, &GPIO_InitStructure);
 	
-	GPIO_InitStructure.GPIO_Pin = PS2_DAT_PIN;
+	GPIO_InitStructure.GPIO_Pin = PS2_Pin_DAT;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-	GPIO_Init(PS2_PORT, &GPIO_InitStructure);
+	GPIO_Init(PS2_Port, &GPIO_InitStructure);
 }
 
 /**

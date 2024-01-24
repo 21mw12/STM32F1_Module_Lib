@@ -17,10 +17,15 @@
 #include "stm32f10x.h"
 #include "delay.h"
 
+/* 长按的触发时长 */
+#define KEY_LONG_PRESS_TIME    50  // 20ms*50 = 1s
+/* 双击的间隔时长 */
+#define KEY_WAIT_DOUBLE_TIME   25 // 20ms*25 = 500ms
+
 /* 按键引脚配置信息 */
-#define Key_Periph		RCC_APB2Periph_GPIOB		// 总线时钟
-#define Key_PORT			GPIOB										// IO端口组
-#define Key_PIN 			GPIO_Pin_10	
+#define Key_Periph		RCC_APB2Periph_GPIOB
+#define Key_Port			GPIOB
+#define Key_Pin 			GPIO_Pin_10	
 
 /* 状态机状态 */
 typedef enum {
@@ -72,15 +77,15 @@ void Key_GetState(void);
 //		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 //		Key_GetState();  //调用状态机
 //		
-//		// 单击
+//		/* 单击处理 */
 //		if(KeyCfg.KEY_Event == KEY_Event_SingleClick){
 //
 //		}
-//		// 双击
+//		/* 双击处理 */
 //		if(KeyCfg.KEY_Event == KEY_Event_DoubleClick){
 //
 //		}
-//		// 长按
+//		/* 长按处理 */
 //		if(KeyCfg.KEY_Event == KEY_Event_LongPress)	{
 //
 //		}

@@ -16,8 +16,6 @@
 ///////////////////////////////////////////////////////////
 
 #include "stm32f10x.h"
-#include <stdio.h>
-#include <stdarg.h>
 
 /* USART配置 */
 #define USART1_BaudRate			115200									// 波特率
@@ -25,8 +23,10 @@
 #define USART1_StopBits			USART_StopBits_1				// 停止位长度
 #define USART1_DataLength		USART_WordLength_8b			// 数据长度
 
-/* USART数据包相关配置 */
-/* 注意!!!: 要在USART1.c文件的最下面释放和屏蔽相对应的串口中断函数 */
+/**
+	* USART数据包相关配置
+	* 注意!!!: 要在USART1.c文件的最下面释放和屏蔽相对应的串口中断函数
+	*/
 #define USART1_DataPackage_Length			10				// 数据包最大长度
 #define USART1_DataPackageHead_HEX		0xFF			// 十六进制数据包的包头
 #define USART1_DataPackageTial_HEX		0x00			// 十六进制数据包的包尾
@@ -35,8 +35,8 @@
 /* 串口接收数据 */
 extern uint8_t USART1_RxData;
 /**
-	*  Serial_RxPacket数组（十六进制数据包数组）解释：
-	*  数组的第一位(下标0)表示有效数据量， 第二位(下标1)开始才是真正的数据
+	* Serial_RxPacket数组（十六进制数据包数组）解释：
+	* 数组的第一位(下标0)表示有效数据量， 第二位(下标1)开始才是真正的数据
 	*/
 extern uint8_t USART1_RxPacket[USART1_DataPackage_Length];
 /* Serial_DataString数组（文本数据包数组） */
@@ -114,7 +114,6 @@ void USART1_SendDatePackage_HEX(uint8_t* dataArray, uint16_t dataLength);
 void USART1_SendDatePackage_TEXT(char* String);
 
 #endif
-
 
 ///////////////////////////////////////////////////////////
 //

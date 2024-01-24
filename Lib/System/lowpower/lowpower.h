@@ -24,7 +24,10 @@
 	* 注：修改主频后所有计时功能都会受影响，不建议修改
   */
 
-
+/**
+  * @brief 低功耗模式初始化
+  * @return 无
+  */
 void LowerPower_Init(void);
 
 /**

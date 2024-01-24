@@ -4,12 +4,14 @@ void Encoder_Init(void) {
 	/*  ±÷”≈‰÷√ */
 	RCC_APB1PeriphClockCmd(Encoder_TIM_Periph, ENABLE);
 	RCC_APB2PeriphClockCmd(Encoder_Periph, ENABLE);
+	
 	/* IOø⁄≈‰÷√ */
 	GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_InitStructure.GPIO_Pin = Encoder_A_PIN | Encoder_B_PIN;
+	GPIO_InitStructure.GPIO_Pin = Encoder_A_Pin | Encoder_B_Pin;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(Encoder_PORT, &GPIO_InitStructure);
+	GPIO_Init(Encoder_Port, &GPIO_InitStructure);
+	
 	/* NVIC≈‰÷√ */
 	NVIC_InitTypeDef NVIC_InitStruct;
 	NVIC_InitStruct.NVIC_IRQChannel = Encoder_NVIC_IRQn;
@@ -17,6 +19,7 @@ void Encoder_Init(void) {
 	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 1;
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority =1;
 	NVIC_Init(&NVIC_InitStruct);
+	
 	/* ∂® ±∆˜≈‰÷√ */
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
 	TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
@@ -25,6 +28,7 @@ void Encoder_Init(void) {
 	TIM_TimeBaseInitStructure.TIM_Prescaler = 0;
 	TIM_TimeBaseInitStructure.TIM_RepetitionCounter = 0;
 	TIM_TimeBaseInit(Encoder_TIM, &TIM_TimeBaseInitStructure);
+	
 	/* ∂® ±∆˜ ‰»Î≤∂ªÒ≈‰÷√ */
 	TIM_ICInitTypeDef TIM_ICInitStructure;
   TIM_ICStructInit(&TIM_ICInitStructure);

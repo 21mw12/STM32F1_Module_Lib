@@ -20,11 +20,11 @@
 
 /* PS2引脚配置信息 */
 #define PS2_Periph				RCC_APB2Periph_GPIOB
-#define PS2_PORT					GPIOB
-#define PS2_DAT_PIN 			GPIO_Pin_12
-#define PS2_CMD_PIN 			GPIO_Pin_13
-#define PS2_CS_PIN 				GPIO_Pin_14
-#define PS2_CLK_PIN 			GPIO_Pin_15
+#define PS2_Port					GPIOB
+#define PS2_Pin_DAT 			GPIO_Pin_12
+#define PS2_Pin_CMD 			GPIO_Pin_13
+#define PS2_Pin_CS 				GPIO_Pin_14
+#define PS2_Pin_CLK 			GPIO_Pin_15
 
 /* PS2按键信息 */
 #define PS2_SELECT				0

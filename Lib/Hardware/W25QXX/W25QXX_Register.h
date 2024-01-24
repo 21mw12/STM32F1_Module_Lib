@@ -1,6 +1,15 @@
 #ifndef __W25QXX_REGISTER_H
 #define __W25QXX_REGISTER_H
 
+///////////////////////////////////////////////////////////
+//
+// 文件功能：MPU6050相关寄存器
+// 版本：V1.0
+// 作者：墨蔚（MW）
+// 修改时间：2023/12/27
+//
+///////////////////////////////////////////////////////////
+
 #define W25QXX_WRITE_ENABLE												0x06
 #define W25QXX_WRITE_DISABLE											0x04
 #define W25QXX_READ_STATUS_REGISTER_1							0x05

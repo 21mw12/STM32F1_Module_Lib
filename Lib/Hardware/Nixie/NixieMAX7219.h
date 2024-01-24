@@ -11,14 +11,13 @@
 ///////////////////////////////////////////////////////////
 
 #include "stm32f10x.h"
-#include "delay.h"
 
 /* 8段数码管引脚配置信息 */
 #define MAX7219_Periph				RCC_APB2Periph_GPIOA		// 总线时钟
-#define MAX7219_PORT					GPIOA										// IO端口组
-#define MAX7219_PIN_DIN				GPIO_Pin_1							// MAX7219的IO端口
-#define MAX7219_PIN_LOAD			GPIO_Pin_2
-#define MAX7219_PIN_CLK				GPIO_Pin_3
+#define MAX7219_Port					GPIOA										// IO端口组
+#define MAX7219_Pin_DIN				GPIO_Pin_1							// MAX7219的IO端口
+#define MAX7219_Pin_LOAD			GPIO_Pin_2
+#define MAX7219_Pin_CLK				GPIO_Pin_3
 
 /**
   * @brief 数码管初始化

@@ -11,22 +11,21 @@
 ///////////////////////////////////////////////////////////
 
 #include "stm32f10x.h"
-#include "delay.h"
 
 /* 8段数码管引脚配置信息 */
 #define Nixie_Periph				RCC_APB2Periph_GPIOB		// 总线时钟
-#define Nixie_PORT					GPIOB										// IO端口组
-#define HC254_PIN_A0				GPIO_Pin_0							// 74HC254的IO端口
-#define HC254_PIN_A1				GPIO_Pin_1
-#define HC254_PIN_A2				GPIO_Pin_2
-#define HC254_PIN_A3				GPIO_Pin_3
-#define HC254_PIN_A4				GPIO_Pin_4
-#define HC254_PIN_A5				GPIO_Pin_5
-#define HC254_PIN_A6				GPIO_Pin_6
-#define HC254_PIN_A7				GPIO_Pin_7
-#define HC138_PIN_A					GPIO_Pin_8							// 74HC138的IO端口
-#define HC138_PIN_B					GPIO_Pin_9
-#define HC138_PIN_C					GPIO_Pin_10
+#define Nixie_Port					GPIOB										// IO端口组
+#define HC254_Pin_A0				GPIO_Pin_0							// 74HC254的IO端口
+#define HC254_Pin_A1				GPIO_Pin_1
+#define HC254_Pin_A2				GPIO_Pin_2
+#define HC254_Pin_A3				GPIO_Pin_3
+#define HC254_Pin_A4				GPIO_Pin_4
+#define HC254_Pin_A5				GPIO_Pin_5
+#define HC254_Pin_A6				GPIO_Pin_6
+#define HC254_Pin_A7				GPIO_Pin_7
+#define HC138_Pin_A					GPIO_Pin_8							// 74HC138的IO端口
+#define HC138_Pin_B					GPIO_Pin_9
+#define HC138_Pin_C					GPIO_Pin_10
 
 /**
   * @brief 数码管初始化

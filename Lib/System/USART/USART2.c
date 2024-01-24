@@ -1,4 +1,6 @@
 #include "USART2.h"
+#include <stdio.h>
+#include <stdarg.h>
 
 uint8_t USART2_RxData;
 uint8_t USART2_RxFlag;

@@ -16,8 +16,6 @@
 ///////////////////////////////////////////////////////////
 
 #include "stm32f10x.h"
-#include <stdio.h>
-#include <stdarg.h>
 
 /* USART配置 */
 #define USART2_BaudRate			115200									// 波特率
@@ -25,8 +23,10 @@
 #define USART2_StopBits			USART_StopBits_1				// 停止位长度
 #define USART2_DataLength		USART_WordLength_8b			// 数据长度
 
-/* USART数据包相关配置 */
-/* 注意!!!: 要在USART2.c文件的最下面释放和屏蔽相对应的串口中断函数 */
+/**
+	* USART数据包相关配置
+	* 注意!!!: 要在USART2.c文件的最下面释放和屏蔽相对应的串口中断函数
+	*/
 #define USART2_DataPackage_Length			10				// 数据包最大长度
 #define USART2_DataPackageHead_HEX		0xFF			// 十六进制数据包的包头
 #define USART2_DataPackageTial_HEX		0x00			// 十六进制数据包的包尾

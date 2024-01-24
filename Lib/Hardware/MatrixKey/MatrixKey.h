@@ -11,19 +11,18 @@
 ///////////////////////////////////////////////////////////
 
 #include "stm32f10x.h"
-#include "delay.h"
 
 /* 矩阵按键引脚配置信息 */
 #define MatrixKey_Periph			RCC_APB2Periph_GPIOB		// 总线时钟
-#define MatrixKey_PORT				GPIOB										// IO端口组
-#define MatrixKey_ROW1				GPIO_Pin_3							// 矩阵键盘每行的IO端口
-#define MatrixKey_ROW2				GPIO_Pin_2
-#define MatrixKey_ROW3				GPIO_Pin_1
-#define MatrixKey_ROW4				GPIO_Pin_0
-#define MatrixKey_COLUMN1			GPIO_Pin_4							// 矩阵键盘每列的IO端口
-#define MatrixKey_COLUMN2			GPIO_Pin_5
-#define MatrixKey_COLUMN3			GPIO_Pin_6
-#define MatrixKey_COLUMN4			GPIO_Pin_7
+#define MatrixKey_Port				GPIOB										// IO端口组
+#define MatrixKey_Row1				GPIO_Pin_3							// 矩阵键盘每行的IO端口
+#define MatrixKey_Row2				GPIO_Pin_2
+#define MatrixKey_Row3				GPIO_Pin_1
+#define MatrixKey_Row4				GPIO_Pin_0
+#define MatrixKey_Column1			GPIO_Pin_4							// 矩阵键盘每列的IO端口
+#define MatrixKey_Column2			GPIO_Pin_5
+#define MatrixKey_Column3			GPIO_Pin_6
+#define MatrixKey_Column4			GPIO_Pin_7
 
 /**
   * @brief 矩阵按键初始化

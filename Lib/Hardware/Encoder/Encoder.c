@@ -8,9 +8,9 @@ void Encoder_Init(void) {
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-	GPIO_InitStructure.GPIO_Pin = Encoder_A_PIN | Encoder_B_PIN;
+	GPIO_InitStructure.GPIO_Pin = Encoder_A_Pin | Encoder_B_Pin;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(Encoder_PORT, &GPIO_InitStructure);
+	GPIO_Init(Encoder_Port, &GPIO_InitStructure);
 	
 	GPIO_EXTILineConfig(Encoder_PortSource, Encoder_A_PinSource);
 	GPIO_EXTILineConfig(Encoder_PortSource, Encoder_B_PinSource);
@@ -47,7 +47,7 @@ int8_t Encoder_Get(void) {
 
 void EXTI0_IRQHandler(void) {
 	if (EXTI_GetITStatus(Encoder_A_EXTI_Line) == SET) {
-		if (GPIO_ReadInputDataBit(Encoder_PORT, Encoder_B_PIN) == 0) {
+		if (GPIO_ReadInputDataBit(Encoder_Port, Encoder_B_Pin) == 0) {
 			Encoder_Count--;
 		}
 		EXTI_ClearITPendingBit(Encoder_A_EXTI_Line);
@@ -56,7 +56,7 @@ void EXTI0_IRQHandler(void) {
 
 void EXTI1_IRQHandler(void) {
 	if (EXTI_GetITStatus(Encoder_B_EXTI_Line) == SET) {
-		if (GPIO_ReadInputDataBit(Encoder_PORT, Encoder_A_PIN) == 0) {
+		if (GPIO_ReadInputDataBit(Encoder_Port, Encoder_A_Pin) == 0) {
 			Encoder_Count++;
 		}
 		EXTI_ClearITPendingBit(Encoder_B_EXTI_Line);

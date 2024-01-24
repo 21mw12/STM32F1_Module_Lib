@@ -1,4 +1,5 @@
-#include "delay.h"
+#include "Delay.h"
+
 
 void Delay_us(uint32_t xus) {
 	SysTick->LOAD = 72 * xus;							//设置定时器重装值
