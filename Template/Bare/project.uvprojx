@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Start;.\library;.\user</IncludePath>
+              <IncludePath>.\Start;.\library;.\user;.\System\Sys</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -562,6 +562,13 @@
         </Group>
         <Group>
           <GroupName>System</GroupName>
+          <Files>
+            <File>
+              <FileName>Sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\System\Sys\Sys.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>User</GroupName>
