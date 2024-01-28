@@ -2,7 +2,11 @@
 #include "OLED_Font.h"
 #include "OLED_Instruct.h" 
 #include "delay.h"
-#include "SPI2Hardware.h"
+#if isSPIAgreement == 1
+#include "SPISoftware.h"
+#else
+#include "I2CSoftware.h"
+#endif
 
 /* 设置OLED的大小 */
 #define OLED_Line				 64
@@ -14,8 +18,8 @@
   * @param Data 数据
   * @return 无
   */
-void OLED_Write(uint8_t ComType, uint8_t Data) {	
-	
+void OLED_Write(uint8_t ComType, uint8_t Data) {
+#if isSPIAgreement == 1
 	/* 指令还是数据 */
 	if(ComType == OLED_Data) {
 		GPIO_SetBits(GPIOB, OLED_PIN_DC);
@@ -25,10 +29,19 @@ void OLED_Write(uint8_t ComType, uint8_t Data) {
 
 	/* 片选并传输数据 */
 	GPIO_ResetBits(GPIOB, OLED_PIN_CS);
-	SPI2_Hardware_SwapByte(Data);
+	SPI_Software_SwapByte(Data);
   GPIO_SetBits(GPIOB, OLED_PIN_CS);
 	
-	GPIO_SetBits(GPIOB, OLED_PIN_DC);   	  
+	GPIO_SetBits(GPIOB, OLED_PIN_DC);
+#else
+	I2C_Software_StartSignal();
+	
+	I2C_Software_SendData(OLED_ADDRESS);	// 发送从器件地址
+	I2C_Software_SendData(ComType);
+	I2C_Software_SendData(Data);
+	
+	I2C_Software_StopSignal();
+#endif
 }
 
 /**
@@ -56,6 +69,7 @@ uint32_t Pow(uint32_t a, uint32_t b) {
 }
 			    
 void OLED_Init(void) {
+#if isSPIAgreement == 1
 	RCC_APB2PeriphClockCmd(OLED_Periph, ENABLE);
  
  	GPIO_InitTypeDef GPIO_InitStructure;
@@ -71,6 +85,12 @@ void OLED_Init(void) {
 	GPIO_ResetBits(OLED_PORT, OLED_PIN_RES);
 	Delay_ms(200);
   GPIO_SetBits(OLED_PORT, OLED_PIN_RES);
+#else
+	Delay_ms(1000);
+	
+	OLED_Write(OLED_Command, Display_OFF);
+#endif
+
 	
 	/* 默认配置 */
 	OLED_Write(OLED_Command, Set_Display_RefreshRate);
