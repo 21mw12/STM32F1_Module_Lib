@@ -32,10 +32,10 @@
 #if isSPIAgreement == 1
 /* OLED SPI总线引脚配置信息 */
 #define OLED_Periph		RCC_APB2Periph_GPIOB
-#define OLED_PORT			GPIOB
-#define OLED_PIN_DC 	GPIO_Pin_10
-#define OLED_PIN_RES 	GPIO_Pin_11
-#define OLED_PIN_CS 	GPIO_Pin_12
+#define OLED_Port			GPIOB
+#define OLED_DC_Pin 	GPIO_Pin_10
+#define OLED_RES_Pin 	GPIO_Pin_11
+#define OLED_CS_Pin 	GPIO_Pin_12
 #else
 /* OLED I2C总线器件地址 */
 #define OLED_ADDRESS			0x78

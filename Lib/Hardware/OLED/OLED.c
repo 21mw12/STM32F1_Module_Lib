@@ -1,7 +1,7 @@
 #include "OLED.h"
 #include "OLED_Font.h"
 #include "OLED_Instruct.h" 
-#include "delay.h"
+#include "Delay.h"
 #if isSPIAgreement == 1
 #include "SPISoftware.h"
 #else
@@ -22,17 +22,17 @@ void OLED_Write(uint8_t ComType, uint8_t Data) {
 #if isSPIAgreement == 1
 	/* 指令还是数据 */
 	if(ComType == OLED_Data) {
-		GPIO_SetBits(GPIOB, OLED_PIN_DC);
+		GPIO_SetBits(GPIOB, OLED_DC_Pin);
 	} else {
-	  GPIO_ResetBits(GPIOB, OLED_PIN_DC);	
+	  GPIO_ResetBits(GPIOB, OLED_DC_Pin);	
 	}
 
 	/* 片选并传输数据 */
-	GPIO_ResetBits(GPIOB, OLED_PIN_CS);
+	GPIO_ResetBits(GPIOB, OLED_CS_Pin);
 	SPI_Software_SwapByte(Data);
-  GPIO_SetBits(GPIOB, OLED_PIN_CS);
+  GPIO_SetBits(GPIOB, OLED_CS_Pin);
 	
-	GPIO_SetBits(GPIOB, OLED_PIN_DC);
+	GPIO_SetBits(GPIOB, OLED_DC_Pin);
 #else
 	I2C_Software_StartSignal();
 	
@@ -74,17 +74,17 @@ void OLED_Init(void) {
  
  	GPIO_InitTypeDef GPIO_InitStructure;
  	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Pin = OLED_PIN_DC | OLED_PIN_RES | OLED_PIN_CS;
+	GPIO_InitStructure.GPIO_Pin = OLED_DC_Pin | OLED_RES_Pin | OLED_CS_Pin;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
- 	GPIO_Init(OLED_PORT, &GPIO_InitStructure);
+ 	GPIO_Init(OLED_Port, &GPIO_InitStructure);
 
- 	GPIO_SetBits(OLED_PORT, OLED_PIN_DC | OLED_PIN_RES | OLED_PIN_CS);
+ 	GPIO_SetBits(OLED_Port, OLED_DC_Pin | OLED_RES_Pin | OLED_CS_Pin);
 	
 	Delay_ms(1000);
 	
-	GPIO_ResetBits(OLED_PORT, OLED_PIN_RES);
+	GPIO_ResetBits(OLED_Port, OLED_RES_Pin);
 	Delay_ms(200);
-  GPIO_SetBits(OLED_PORT, OLED_PIN_RES);
+  GPIO_SetBits(OLED_Port, OLED_RES_Pin);
 #else
 	Delay_ms(1000);
 	
