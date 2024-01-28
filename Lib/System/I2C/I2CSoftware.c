@@ -1,11 +1,5 @@
 #include "I2CSoftware.h"
 
-///////////////////////////////////////////////////////////
-//
-// I2C基础时序实现
-//
-///////////////////////////////////////////////////////////
-
 /**
   * @brief  SCL写数据
   * @param  state ： 数据内容
@@ -35,37 +29,26 @@ uint8_t SDA_Read(void) {
     return BitValue;
 }
 
-/**
-  * @brief  I2C开始
-  * @param  GPIOx ： IO端口组
-  * @param  GPIO_Pin ： IO端口
-  * @retval 无
-  */
-void I2C_Start(void) {
+///////////////////////////////////////////////////////////
+//
+// I2C基础时序实现
+//
+///////////////////////////////////////////////////////////
+
+void I2C_Software_StartSignal(void) {
 	SDA_Write(1);
 	SCL_Write(1);
 	SDA_Write(0);
 	SCL_Write(0);
 }
 
-/**
-  * @brief  I2C停止
-  * @param  GPIOx ： IO端口组
-  * @param  GPIO_Pin ： IO端口
-  * @retval 无
-  */
-void I2C_Stop(void) {
+void I2C_Software_StopSignal(void) {
 	SDA_Write(0);
 	SCL_Write(1);
 	SDA_Write(1);
 }
 
-/**
-  * @brief  I2C发送一个字节
-  * @param  Byte 要发送的一个字节
-  * @retval 无
-  */
-void I2C_SendByte(uint8_t Byte) {
+void I2C_Software_SendData(uint8_t Byte) {
 	uint8_t i;
 	for (i = 0; i < 8; i++)
 	{
@@ -77,11 +60,7 @@ void I2C_SendByte(uint8_t Byte) {
 	SCL_Write(0);
 }
 
-/**
-  * @brief  I2C接收一个字节
-  * @retval 接收到的数据
-  */
-uint8_t I2C_ReceiveByte(void) {
+uint8_t I2C_Software_ReceiveByte(void) {
     uint8_t i;
     uint8_t Byte = 0x00;
     SDA_Write(1);
@@ -95,22 +74,13 @@ uint8_t I2C_ReceiveByte(void) {
     return Byte;
 }
 
-/**
-  * @brief  发送应答
-  * @param  应答信息
-  * @retval 无
-  */
-void I2C_SendAck(uint8_t AckBit) {
+void I2C_Software_SendAck(uint8_t AckBit) {
     SDA_Write(AckBit);
     SCL_Write(1);
     SCL_Write(0);
 }
 
-/**
-  * @brief  接收应答
-  * @retval 应答信息
-  */
-uint8_t I2C_ReceiveAck(void) {
+uint8_t I2C_Software_ReceiveAck(void) {
     uint8_t AckBit;
     SDA_Write(1);
     SCL_Write(1);
@@ -139,45 +109,45 @@ void I2C_Software_Init(void) {
 }
 
 void I2C_Software_SendByte(uint8_t SlaveAddr, uint8_t writeAddr, uint8_t pBuffer) {
-	I2C_Start();
-	I2C_SendByte(SlaveAddr);
-	I2C_SendByte(writeAddr);
-	I2C_SendByte(pBuffer); 
-	I2C_Stop();
+	I2C_Software_StartSignal();
+	I2C_Software_SendData(SlaveAddr);
+	I2C_Software_SendData(writeAddr);
+	I2C_Software_SendData(pBuffer); 
+	I2C_Software_StopSignal();
 }
 
 void I2C_Software_SendArray(uint8_t SlaveAddr, uint8_t WriteAddr, uint8_t* pBuffer, u16 NumByteToWrite) {
-	I2C_Start();
-	I2C_SendByte(SlaveAddr);
-	I2C_SendByte(WriteAddr);
+	I2C_Software_StartSignal();
+	I2C_Software_SendData(SlaveAddr);
+	I2C_Software_SendData(WriteAddr);
 	
 	for (uint16_t i = 0; i < NumByteToWrite; i++) {
-		I2C_SendByte(*(pBuffer + i)); 
+		I2C_Software_SendData(*(pBuffer + i)); 
 	}
 	
-	I2C_Stop();
+	I2C_Software_StopSignal();
 }
 
 uint8_t I2C_Software_ReadByte(uint8_t SlaveAddr, uint8_t readAddr) {
 	uint8_t data;
 
-	I2C_Start();
-	I2C_SendByte(SlaveAddr);
-	I2C_SendByte(readAddr);
-	data = I2C_ReceiveByte();
-	I2C_Stop();
+	I2C_Software_StartSignal();
+	I2C_Software_SendData(SlaveAddr);
+	I2C_Software_SendData(readAddr);
+	data = I2C_Software_ReceiveByte();
+	I2C_Software_StopSignal();
 
 	return data;
 }
 
 void I2C_Software_ReadArray(uint8_t SlaveAddr, uint8_t readAddr, uint8_t* pBuffer, u16 NumByteToRead) {
-	I2C_Start();
-	I2C_SendByte(SlaveAddr);
-	I2C_SendByte(readAddr);
+	I2C_Software_StartSignal();
+	I2C_Software_SendData(SlaveAddr);
+	I2C_Software_SendData(readAddr);
 
 	for (uint16_t i = 0; i < NumByteToRead; i++) {
-		*(pBuffer + i) = I2C_ReceiveByte();
+		*(pBuffer + i) = I2C_Software_ReceiveByte();
 	}
 
-	I2C_Stop();
+	I2C_Software_StopSignal();
 }
