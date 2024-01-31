@@ -164,6 +164,42 @@ void OLED_RamClear(void) {
 	}
 }
 
+void OLED_ReversalRamPart(uint8_t X_start, uint8_t Y_start, uint8_t X_length, uint8_t Y_length) {
+	uint8_t upReversalLength = ((Y_start < 8) ? Y_start : Y_start % 8);	// 计算开始的第一个区块需要反转的长度
+	uint8_t otherFullBlock = (Y_length - upReversalLength) / 8;		// 剩余完整区块
+	if ((Y_length - upReversalLength) % 8) otherFullBlock++;		// 超出部分按照一个区块计算
+	uint8_t downNoReversalLength = (Y_length - upReversalLength) % 8;		// 计算下半反转的长度
+	if (downNoReversalLength != 0) downNoReversalLength = 8 - downNoReversalLength;
+
+	uint16_t index = (Y_start / 8) * OLED_Column + X_start;	// 起始下标
+	uint8_t mask = 0;		// 反转掩码
+	
+	if (upReversalLength != 0) {
+		mask = ~((0x01 << upReversalLength) - 1);
+		for (uint8_t i = 0; i <= X_length; i++) {
+			GARM[index + i] ^= mask;
+		}
+		index += OLED_Column;
+	}
+	
+	if (otherFullBlock != 0) {
+		for (uint8_t i = 0; i < otherFullBlock; i++) {
+			for (uint8_t i = 0; i <= X_length; i++) {
+				GARM[index + i] = ~GARM[index + i];
+			}
+			index += OLED_Column;
+		}
+	}
+
+	if (downNoReversalLength != 0) {
+		index -= OLED_Column;
+		mask = (0x01 << downNoReversalLength) - 1;
+		for (uint8_t i = 0; i <= X_length; i++) {
+			GARM[index + i] ^= mask;
+		}
+	}
+}
+
 void OLED_DrawPoint(uint8_t X, uint8_t Y) {
 	GARM[Y / 8 * 128 + X] |= 0x01 << (Y % 8);
 }
@@ -441,7 +477,7 @@ void OLED_SetDensity(ShowPercent percent) {
 }
 
 void OLED_DrawChar(uint8_t Line, uint8_t Column, char Char) {
-	uint16_t index = (Line - 1) * OLED_Column + (Column - 1) * 8;
+	uint16_t index = (Line - 1)* 2 * OLED_Column + (Column - 1) * 8;
 	
 	for (uint8_t Y = 0; Y < 2; Y++) {
 		for (uint8_t X = 0; X < 8; X++) {

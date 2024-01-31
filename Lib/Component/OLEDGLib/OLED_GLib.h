@@ -4,9 +4,9 @@
 ///////////////////////////////////////////////////////////
 //
 // 文件功能：OLED图形库
-// 版本：V3.0
+// 版本：V3.1
 // 作者：墨蔚（MW）
-// 修改时间：2024/01/28
+// 修改时间：2024/01/31
 //
 // 思路来源B站up主——大明狐《一起玩OLED屏幕》(BV18h411K7MZ)
 // 这里除了实现视频中功能的实现，还添加了基础的显示功能
@@ -86,6 +86,16 @@ void OLED_RefreshRamPart(uint8_t X_start, uint8_t Y_start, uint8_t X_length, uin
   * @return 无
   */
 void OLED_RamClear(void);
+
+/**
+  * @brief  OLED反转部分显存颜色
+  * @param X_start 刷新区域开始的x坐标
+  * @param Y_start 刷新区域开始的y坐标
+  * @param X_length 刷新区域x轴方向上的长度
+  * @param Y_length 刷新区域y轴方向上的长度
+  * @return 无
+  */
+void OLED_ReversalRamPart(uint8_t X_start, uint8_t Y_start, uint8_t X_length, uint8_t Y_length);
 
 /**
   * @brief 画一个点
@@ -262,6 +272,9 @@ void OLED_DrawBinNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Leng
 // V2.0: 2024/01/07
 //				根据新的I2C原子化重构了底层代码
 // V3.0: 2024/01/28
-//				根据新的I2C原子化重构了底层代码
+//				合并了SPI协议，并可以简单的切换两种协议使用
+// V3.1: 2024/01/31
+//				修复了绘制Char型数据行数错误的Bug
+//				添加了反转某块显示颜色的功能
 //
 ///////////////////////////////////////////////////////////
