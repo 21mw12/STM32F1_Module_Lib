@@ -183,5 +183,7 @@ Button MatrixKey_TransitionKeyCode(uint8_t KeyCode) {
 			return Button_WellNumber;
 		case 16:
 			return Button_D;
+		default:
+			return Button_NULL;
 	}
 }
