@@ -1,6 +1,6 @@
 #include "EncoderTIM.h"
 
-EncoderDirect Encoder_GetDirection(uint16_t* encoderCount) {
+EncoderDirect Encoder_GetSpinCount(uint16_t* encoderCount) {
 	static uint16_t lastCount;	// 记录上一次旋转值
 	
 	lastCount = *encoderCount;
