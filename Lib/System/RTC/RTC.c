@@ -34,7 +34,16 @@ void RTC_Init(void) {
 		RTC_WaitForSynchro();
 		RTC_WaitForLastTask();
 	}
-	
+}
+
+void RTC_NVIC_Init(void) {
+  NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_InitStructure.NVIC_IRQChannel = RTC_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;	
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_Init(&NVIC_InitStructure);
+	RTC_ITConfig(RTC_IT_SEC | RTC_IT_ALR, ENABLE);
 }
 
 void RTC_SetTime(uint16_t Year, uint8_t Month, uint8_t Day, uint8_t Hour, uint8_t Minute, uint8_t Second) {
@@ -96,4 +105,16 @@ void RTC_SetAlarmCountDown(uint32_t AlarmValue) {
 
 uint8_t RTC_CheckAlarm(void) {
 	return RTC_GetFlagStatus(RTC_FLAG_ALR);
+}
+
+void RTC_IRQHandler(void) {
+	if (RTC_GetITStatus(RTC_IT_SEC) != RESET) {
+		/* 秒中断任务 */
+ 	}
+	if(RTC_GetITStatus(RTC_IT_ALR)!= RESET)	{
+		RTC_ClearITPendingBit(RTC_IT_ALR);
+	  /* 闹钟中断任务 */
+  }
+	RTC_ClearITPendingBit(RTC_IT_SEC | RTC_IT_OW);
+	RTC_WaitForLastTask();   						 	   	 
 }
