@@ -4,9 +4,9 @@
 ///////////////////////////////////////////////////////////
 //
 // 文件功能：OLED图形库
-// 版本：V3.1
+// 版本：V3.4
 // 作者：墨蔚（MW）
-// 修改时间：2024/01/31
+// 修改时间：2024/02/01
 //
 // 思路来源B站up主——大明狐《一起玩OLED屏幕》(BV18h411K7MZ)
 // 这里除了实现视频中功能的实现，还添加了基础的显示功能
@@ -30,11 +30,12 @@
 	* 注：无论那种总线默认使用软件模拟
 	*/
 #define isSPIAgreement		1
-
-/* 设置OLED的显示大小 */
-#define OLED_GRAM_Size	 1024
-#define OLED_Line				 64
-#define OLED_Column			 128
+/**
+  * 是否使用0.96寸屏幕
+	*  1表示使用0.96寸屏幕（64*128）
+	*  0表示使用0.91寸屏幕（32*128）
+	*/
+#define is96Screen				1
 
 #if isSPIAgreement == 1
 /* OLED SPI总线引脚配置信息 */
@@ -58,6 +59,7 @@ typedef enum {
 	Hundred_Percent			// 100%占比
 } ShowPercent;
 
+
 /**
   * @brief  OLED绘图初始化
   * @return 无
@@ -71,21 +73,30 @@ void OLED_GLib_Init(void);
 void OLED_RefreshRam(void);
 
 /**
-  * @brief  OLED刷新部分显存
-  * @param X_start 刷新区域开始的x坐标
-  * @param Y_start 刷新区域开始的y坐标
-  * @param X_length 刷新区域x轴方向上的长度
-  * @param Y_length 刷新区域y轴方向上的长度
+  * @brief OLED刷新部分显存
+  * @param Line 起始行位置（0~7）
+  * @param Column 起始列位置（0~127）
+  * @param Line_length 行的长度
+  * @param Column_length 列的长度
   * @return 无
-	* 注：由于Y轴必须刷新8整数倍，所以不足整数倍的会强制补齐
   */
-void OLED_RefreshRamPart(uint8_t X_start, uint8_t Y_start, uint8_t X_length, uint8_t Y_length);
+void OLED_RefreshRamPart(uint8_t Line, uint8_t Column, uint8_t Line_length, uint8_t Column_length);
 
 /**
-  * @brief  OLED清除所有缓存内容
+  * @brief  OLED清除所有显存
   * @return 无
   */
-void OLED_RamClear(void);
+void OLED_ClearRam(void);
+
+/**
+  * @brief  OLED清除部分显存
+  * @param Line 起始行位置（0~7）
+  * @param Column 起始列位置（0~127）
+  * @param Line_length 行的长度
+  * @param Column_length 列的长度
+  * @return 无
+  */
+void OLED_ClearRamPart(uint8_t Line, uint8_t Column, uint8_t Line_length, uint8_t Column_length);
 
 /**
   * @brief  OLED反转部分显存颜色
@@ -207,7 +218,7 @@ void OLED_SetDensity(ShowPercent percent);
   * @param  Char 要显示的一个字符，范围：ASCII可见字符
   * @retval 无
   */
-void OLED_DrawChar(uint8_t Line, uint8_t Column, char Char);
+void OLED_DrawChar(uint8_t Line, uint8_t Column, char Char, uint8_t Front_size);
 
 /**
   * @brief  OLED绘制字符串
@@ -216,7 +227,7 @@ void OLED_DrawChar(uint8_t Line, uint8_t Column, char Char);
   * @param  String 要显示的字符串，范围：ASCII可见字符
   * @retval 无
   */
-void OLED_DrawString(uint8_t Line, uint8_t Column, char *String);
+void OLED_DrawString(uint8_t Line, uint8_t Column, char *String, uint8_t Front_size);
 
 /**
   * @brief  OLED绘制数字（十进制，带符号数）
@@ -227,7 +238,7 @@ void OLED_DrawString(uint8_t Line, uint8_t Column, char *String);
   * @param  Front_size 字符的大小，8：8*16大小  16: 16*32大小
   * @retval 无
   */
-void OLED_DrawNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Length);
+void OLED_DrawNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Length, uint8_t Front_size);
 
 /**
   * @brief  OLED绘制数字（八进制，带符号数）
@@ -238,7 +249,7 @@ void OLED_DrawNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Length);
   * @param  Front_size 字符的大小，8：8*16大小  16: 16*32大小
   * @retval 无
   */
-void OLED_DrawSignedNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Length);
+void OLED_DrawSignedNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Length, uint8_t Front_size);
 
 /**
   * @brief  OLED绘制数字（十六进制，正数）
@@ -249,7 +260,7 @@ void OLED_DrawSignedNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Le
   * @param  Front_size 字符的大小，8：8*16大小  16: 16*32大小
   * @retval 无
   */
-void OLED_DrawHexNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length);
+void OLED_DrawHexNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length, uint8_t Front_size);
 
 /**
   * @brief  OLED绘制数字（二进制，正数）
@@ -260,7 +271,7 @@ void OLED_DrawHexNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Leng
   * @param  Front_size 字符的大小，8：8*16大小  16: 16*32大小
   * @retval 无
   */
-void OLED_DrawBinNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length);
+void OLED_DrawBinNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length, uint8_t Front_size);
 
 #endif
 
@@ -276,5 +287,11 @@ void OLED_DrawBinNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Leng
 // V3.1: 2024/01/31
 //				修复了绘制Char型数据行数错误的Bug
 //				添加了反转某块显示颜色的功能
+// V3.4: 2024/02/01
+//				修复了反转某块显示颜色在特定数下的错误Bug
+//				添加了清除部分显存的功能
+//				更正了清除和刷新显存功能的功能
+//				提供了方便的切换不同尺寸的配置选项
+//				添加了16*32数字字体的绘制
 //
 ///////////////////////////////////////////////////////////

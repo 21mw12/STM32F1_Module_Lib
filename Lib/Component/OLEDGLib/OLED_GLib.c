@@ -9,6 +9,18 @@
 #include "I2CSoftware.h"
 #endif
 
+
+/* 设置OLED的显示大小 */
+#if is96Screen == 1
+#define OLED_GRAM_Size	 1024
+#define OLED_Line				 64
+#define OLED_Column			 128
+#else
+#define OLED_GRAM_Size	 512
+#define OLED_Line				 32
+#define OLED_Column			 128
+#endif
+
 uint8_t GARM[OLED_GRAM_Size];
 
 void OLED_Write(uint8_t ComType, uint8_t Data) {
@@ -52,6 +64,8 @@ void OLED_SetCursor(uint8_t X,uint8_t Y) {
 
 void OLED_GLib_Init(void) {
 #if isSPIAgreement == 1
+	SPI_Software_Init();
+	
 	RCC_APB2PeriphClockCmd(OLED_Periph, ENABLE);
  
  	GPIO_InitTypeDef GPIO_InitStructure;
@@ -68,6 +82,8 @@ void OLED_GLib_Init(void) {
 	Delay_ms(200);
   GPIO_SetBits(OLED_Port, OLED_RES_Pin);
 #else
+	I2C_Software_Init();
+	
 	Delay_ms(1000);
 	
 	OLED_Write(OLED_Command, Display_OFF);
@@ -77,7 +93,11 @@ void OLED_GLib_Init(void) {
 	OLED_Write(OLED_Command, Set_Display_RefreshRate);
 	OLED_Write(OLED_Command, 0xF0);
 	OLED_Write(OLED_Command, Set_Display_Multiplexing);
+#if is96Screen == 1
 	OLED_Write(OLED_Command, 0x3F);
+#else
+	OLED_Write(OLED_Command, 0x1F);
+#endif
 	OLED_Write(OLED_Command, Set_Display_Skew);			// 设置显示偏移
 	OLED_Write(OLED_Command, 0x00);
 	OLED_Write(OLED_Command, Display_Start_Line);		// 设置显示开始行
@@ -91,7 +111,7 @@ void OLED_GLib_Init(void) {
 	
 	/* 默认设置 */
 	OLED_Write(OLED_Command, Set_Display_Luminance);	// 设置亮度值（范围：0x00 ~ 0xFF）
-	OLED_Write(OLED_Command, 0x7F);;
+	OLED_Write(OLED_Command, 0x7F);
 	OLED_Write(OLED_Command, Display_Left_Right_Nomal);// 设置显示上下左右模式
 	OLED_Write(OLED_Command, Display_Up_Down_Nomal);
 	OLED_Write(OLED_Command, Display_Color_Nomal);		// 设置屏幕是否反色
@@ -105,19 +125,19 @@ void OLED_GLib_Init(void) {
 	OLED_Write(OLED_Command, Display_SetAddressPattern);
 	OLED_Write(OLED_Command, 0x00);
 	
-	/**
-    * 设置列引脚
-		* 0x02 - 分辨率为128*32（0.91寸）
-		* 0x12 - 分辨率为128*64（0.96寸）
-		*/
+	/* 设置列引脚 */
 	OLED_Write(OLED_Command, Set_Display_ColumnPinConfig);
-	OLED_Write(OLED_Command, 0x12);
+#if is96Screen == 1
+	OLED_Write(OLED_Command, 0x12);		// 分辨率为128*64（0.96寸）
+#else
+	OLED_Write(OLED_Command, 0x02);		// 分辨率为128*32（0.91寸）
+#endif
 	
 	OLED_Write(OLED_Command, Display_ON);
 	
-	for (uint16_t i = 0; i < OLED_GRAM_Size; i++) {
-		GARM[i] = 0x00;
-	}
+	/* 清除并刷新一次显存 */
+	OLED_ClearRam();
+	OLED_RefreshRam();
 }
 
 void OLED_RefreshRam(void) {
@@ -152,7 +172,7 @@ void OLED_RefreshRamPart(uint8_t X_start, uint8_t Y_start, uint8_t X_length, uin
 	}
 }
 
-void OLED_RamClear(void) {
+void OLED_ClearRam(void) {
 	uint16_t k = 0;
 	
 	for (uint8_t Y = 0; Y < OLED_Line / 8; Y++) {
@@ -164,18 +184,36 @@ void OLED_RamClear(void) {
 	}
 }
 
+void OLED_ClearRamPart(uint8_t Line, uint8_t Column, uint8_t Line_length, uint8_t Column_length) {
+	uint16_t index = 0;
+	
+	for (uint8_t Y = 0; Y < Line_length; Y++) {
+		
+		index = (Y + Line) * OLED_Column + Column;
+		
+		for (uint8_t X = 0; X < Column_length; X++) {
+			GARM[index + Column + X] = 0x00;
+		}
+	}
+}
+
 void OLED_ReversalRamPart(uint8_t X_start, uint8_t Y_start, uint8_t X_length, uint8_t Y_length) {
-	uint8_t upReversalLength = ((Y_start < 8) ? Y_start : Y_start % 8);	// 计算开始的第一个区块需要反转的长度
-	uint8_t otherFullBlock = (Y_length - upReversalLength) / 8;		// 剩余完整区块
-	if ((Y_length - upReversalLength) % 8) otherFullBlock++;		// 超出部分按照一个区块计算
-	uint8_t downNoReversalLength = (Y_length - upReversalLength) % 8;		// 计算下半反转的长度
+	uint8_t upNoReversalLength = (Y_start < 8) ? Y_start : Y_start % 8;	// 计算开始的第一个区块不需要反转的长度
+	uint8_t otherLength = (upNoReversalLength == 0) ? Y_length : (Y_length - 8 + upNoReversalLength);
+	uint8_t otherFullBlock = otherLength / 8;		// 剩余完整区块
+	if ((otherLength) % 8) otherFullBlock++;		// 超出部分按照一个区块计算
+	uint8_t downNoReversalLength = (Y_length - upNoReversalLength) % 8;		// 计算下半反转的长度
 	if (downNoReversalLength != 0) downNoReversalLength = 8 - downNoReversalLength;
 
 	uint16_t index = (Y_start / 8) * OLED_Column + X_start;	// 起始下标
 	uint8_t mask = 0;		// 反转掩码
 	
-	if (upReversalLength != 0) {
-		mask = ~((0x01 << upReversalLength) - 1);
+//	OLED_DrawNum(1, 1, upNoReversalLength, 3);
+//	OLED_DrawNum(2, 1, otherFullBlock, 3);
+//	OLED_DrawNum(3, 1, downNoReversalLength, 3);
+	
+	if (upNoReversalLength != 0) {
+		mask = ~((0x01 << upNoReversalLength) - 1);
 		for (uint8_t i = 0; i <= X_length; i++) {
 			GARM[index + i] ^= mask;
 		}
@@ -193,7 +231,7 @@ void OLED_ReversalRamPart(uint8_t X_start, uint8_t Y_start, uint8_t X_length, ui
 
 	if (downNoReversalLength != 0) {
 		index -= OLED_Column;
-		mask = (0x01 << downNoReversalLength) - 1;
+		mask = ~((0x01 << downNoReversalLength) - 1);
 		for (uint8_t i = 0; i <= X_length; i++) {
 			GARM[index + i] ^= mask;
 		}
@@ -476,79 +514,88 @@ void OLED_SetDensity(ShowPercent percent) {
 	}
 }
 
-void OLED_DrawChar(uint8_t Line, uint8_t Column, char Char) {
-	uint16_t index = (Line - 1)* 2 * OLED_Column + (Column - 1) * 8;
+void OLED_DrawChar(uint8_t Line, uint8_t Column, char Char, uint8_t Front_size) {
+	uint16_t index = (Line - 1)* 2 * OLED_Column + (Column - 1) * Front_size;
 	
-	for (uint8_t Y = 0; Y < 2; Y++) {
-		for (uint8_t X = 0; X < 8; X++) {
-			GARM[index + X] = OLED_F8x16[Char - ' '][Y * 8 + X];
+	if (Front_size == 8) {
+		for (uint8_t Y = 0; Y < 2; Y++) {
+			for (uint8_t X = 0; X < 8; X++) {
+				GARM[index + X] = OLED_F8x16[Char - ' '][Y * Front_size + X];
+			}
+			index += OLED_Column;
 		}
-		index += OLED_Column;
+	} else {
+		for (uint8_t Y = 0; Y < 4; Y++) {
+			for (uint8_t X = 0; X < Front_size; X++) {
+				GARM[index + X] = OLED_F16x32[Char - '0'][Y * Front_size + X];
+			}
+			index += OLED_Column;
+		}		
 	}
 }
 
 
-void OLED_DrawString(uint8_t Line, uint8_t Column, char* String) {
+void OLED_DrawString(uint8_t Line, uint8_t Column, char* String, uint8_t Front_size) {
 	for (uint8_t i = 0; String[i] != '\0'; i++) {
-		OLED_DrawChar(Line, Column + i, String[i]);
+		OLED_DrawChar(Line, Column + i, String[i], Front_size);
 	}
 }
 
-void OLED_DrawNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Length) {
+void OLED_DrawNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Length, uint8_t Front_size) {
 	uint8_t i;
 	char showNumber;
 	
 	if (Number < 0) {
-		OLED_DrawChar(Line, Column, '-');
+		OLED_DrawChar(Line, Column, '-', 8);
 		Number = -Number;
 		Column++;
 	}
 	
 	for (i = 1; i <= Length; i++) {
 		showNumber = Number % 10 + '0';
-		OLED_DrawChar(Line, Column + Length - i, showNumber);
+		OLED_DrawChar(Line, Column + Length - i, showNumber, Front_size);
 		Number /= 10;
 	}
 }
 
-void OLED_DrawSignedNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Length) {
+void OLED_DrawSignedNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Length, uint8_t Front_size) {
 	uint8_t i;
 	char showNumber;
 	
 	if (Number < 0) {
-		OLED_DrawChar(Line, Column, '-');
+		OLED_DrawChar(Line, Column, '-', 8);
 		Number = -Number;
 		Column++;
 	}
 	
 	for (i = 1; i <= Length; i++) {
 		showNumber = Number % 8 + '0';
-		OLED_DrawChar(Line, Column + Length - i, showNumber);
+		OLED_DrawChar(Line, Column + Length - i, showNumber, Front_size);
 		Number /= 8;
 	}
 }
 
-void OLED_DrawHexNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length) {
+void OLED_DrawHexNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length, uint8_t Front_size) {
 	uint8_t i, SingleNumber;
 	
 	for (i = 1; i <= Length; i++) {
 		SingleNumber = Number % 16;
 		if (SingleNumber < 10) {
-			OLED_DrawChar(Line, Column + Length - i, SingleNumber + '0');
+			OLED_DrawChar(Line, Column + Length - i, SingleNumber + '0', Front_size);
 		} else {
-			OLED_DrawChar(Line, Column + Length - i, SingleNumber - 10 + 'A');
+			OLED_DrawChar(Line, Column + Length - i, SingleNumber - 10 + 'A', Front_size);
 		}
 		Number /= 16;
 	}
 }
 
-void OLED_DrawBinNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length) {
+void OLED_DrawBinNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length, uint8_t Front_size) {
 	uint8_t i;
 	char showNumber;
 	
 	for (i = 1; i <= Length; i++) {
 		showNumber = Number % 2 + '0';		
-		OLED_DrawChar(Line, Column + Length - i, showNumber);
+		OLED_DrawChar(Line, Column + Length - i, showNumber, Front_size);
 		Number /= 2;
 	}
 }
