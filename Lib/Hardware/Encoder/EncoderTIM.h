@@ -11,35 +11,36 @@
 ///////////////////////////////////////////////////////////
 
 #include "stm32f10x.h"
+#include "TIM3Encoder.h"
 
-/* 旋转编码器配置信息 */
-#define Encoder_Periph		RCC_APB2Periph_GPIOA		// 总线时钟
-#define Encoder_Port			GPIOA										// IO端口组
-#define Encoder_A_Pin 		GPIO_Pin_6							// A相IO端口
-#define Encoder_B_Pin 		GPIO_Pin_7							// B相IO端口
-
-#define Encoder_TIM				TIM3					// 定时器
-#define Encoder_TIM_Periph			RCC_APB1Periph_TIM3			// 定时器时钟线
-#define Encoder_NVIC_IRQn 			TIM3_IRQn								// 中断通道
-#define Encoder_A_TIM_Channel		TIM_Channel_1						// 定时器通道
-#define Encoder_B_TIM_Channel		TIM_Channel_2						// 定时器通道
+/* 旋转编码器旋转方向枚举 */
+typedef enum {
+	EncoderDirect_Idel = 0,		// 未旋转
+	EncoderDirect_Clockwise,	// 顺时钟旋转
+	EncoderDirect_AntiClockwise	// 逆时钟旋转
+} EncoderDirect;
 
 /**
   * @brief 旋转编码器初始化
   * @return 无
   */
-void Encoder_Init(void);
+#define Encoder_Init()		TIM3_Encoder_Init()
 
 /**
-  * @brief 获取当前旋转编码器的值, 并清零
-  * @return 旋转编码器的值
+  * @brief 获得旋转编码器旋转的数值和方向
+  * @param encoderCount 旋转数值
+  * @return 旋转方向
   */
-int16_t Encoder_GetClear(void);
-
-/**
-  * @brief 获取当前旋转编码器的值
-  * @return 旋转编码器的值
-  */
-uint32_t Encoder_Get(void);
+EncoderDirect Encoder_GetSpinCount(uint16_t* encoderCount);
 
 #endif
+
+///////////////////////////////////////////////////////////
+//
+// 更新日志：
+// V1.0: 2023/05/06
+//				实现了旋转编码器的基础绘图功能
+// V2.0: 2024/02/01
+//				基于硬件编码器重构了代码
+//
+///////////////////////////////////////////////////////////
