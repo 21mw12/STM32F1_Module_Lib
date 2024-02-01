@@ -15,11 +15,11 @@
 #include "stm32f10x.h"
 
 /* 软件SPI端口信息 */
-#define SPI_Software_GPIOPeriph		RCC_APB2Periph_GPIOA
-#define SPI_Software_Port					GPIOA
-#define SPI_Software_Pin_CLK			GPIO_Pin_5
-#define SPI_Software_Pin_MISO			GPIO_Pin_6
-#define SPI_Software_Pin_MOSI			GPIO_Pin_7
+#define SPI_Software_GPIOPeriph		RCC_APB2Periph_GPIOB
+#define SPI_Software_Port					GPIOB
+#define SPI_Software_Pin_CLK			GPIO_Pin_13
+#define SPI_Software_Pin_MISO			GPIO_Pin_14
+#define SPI_Software_Pin_MOSI			GPIO_Pin_15
 
 /**
   * @brief 软件SPI初始化
