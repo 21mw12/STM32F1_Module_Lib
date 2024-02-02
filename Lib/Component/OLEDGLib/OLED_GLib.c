@@ -152,22 +152,16 @@ void OLED_RefreshRam(void) {
 	}
 }
 
-void OLED_RefreshRamPart(uint8_t X_start, uint8_t Y_start, uint8_t X_length, uint8_t Y_length) {
-	uint8_t Y, YEnd;
-	uint16_t index;
+void OLED_RefreshRamPart(uint8_t Line, uint8_t Column, uint8_t Line_length, uint8_t Column_length) {
+	uint16_t index = 0;
 	
-	Y = Y_start / 8;
-	if (Y_start % 8 != 0) Y++;
-	YEnd = (Y_start + Y_length) / 8;
-	if ((Y_start + Y_length) % 8 != 0) YEnd++;
-	
-	for (; Y < YEnd; Y++) {
-		OLED_SetCursor(X_start, Y);
+	for (uint8_t Y = 0; Y < Line_length; Y++) {
+		OLED_SetCursor(Column, Y + Line);
 		
-		index = Y * OLED_Column + X_start;
+		index = (Y + Line) * OLED_Column + Column;
 		
-		for (uint8_t X = 0; X < X_length; X++) {
-			OLED_Write(OLED_Data, GARM[index + X]);
+		for (uint8_t X = 0; X < Column_length; X++) {
+			OLED_Write(OLED_Data, GARM[index + Column + X]);
 		}
 	}
 }

@@ -57,13 +57,13 @@ uint32_t TIM3_Encoder_Get(void) {
 	return count;
 }
 
-int16_t TIM3_overtime = 0;
+int16_t TIM3_overflow = 0;
 void TIM3_IRQHandler(void) {
 	if(TIM_GetITStatus(TIM3, TIM_IT_Update) == SET) {
 		if(TIM3->CR1 && TIM_CounterMode_Down != TIM_CounterMode_Down) {
-			TIM3_overtime++;
+			TIM3_overflow++;
 		}	else {
-			TIM3_overtime--;
+			TIM3_overflow
 		}
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 	}
