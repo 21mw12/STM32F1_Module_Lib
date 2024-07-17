@@ -16,8 +16,8 @@
 /* 软件I2C端口信息 */
 #define I2C_Software_GPIOPeriph		RCC_APB2Periph_GPIOB
 #define I2C_Software_Port					GPIOB
-#define I2C_Software_Pin_SCL			GPIO_Pin_10
-#define I2C_Software_Pin_SDA			GPIO_Pin_11
+#define I2C_Software_Pin_SCL			GPIO_Pin_6
+#define I2C_Software_Pin_SDA			GPIO_Pin_7
 
 /**
   * @brief 软件I2C初始化
@@ -56,14 +56,14 @@ uint8_t I2C_Software_ReceiveByte(void);
 
 /**
   * @brief  发送应答
-  * @param  应答信息
+  * @param  应答信息 1表示不给从机应答
   * @retval 无
   */
 void I2C_Software_SendAck(uint8_t AckBit);
 
 /**
   * @brief  接收应答
-  * @retval 应答信息
+  * @retval 应答信息 0表示接收到应答
   */
 uint8_t I2C_Software_ReceiveAck(void);
 

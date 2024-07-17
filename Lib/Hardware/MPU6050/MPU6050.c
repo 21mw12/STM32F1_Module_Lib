@@ -1,9 +1,17 @@
 #include "MPU6050.h"
+#include "delay.h"
+#include "MPU6050_Register.h"
+#if whichI2C == 0
+#include "I2CSoftware.h"
+//#elif whichI2C == 1
+//#include "I2C1Hardware.h"
+//#else
+//#include "I2C2Hardware.h"
+#endif
 
-// X、Y、Z三轴加速度/陀螺仪原始数据
-// 从下标0到5分别是： AX、 AY、 AZ、 GX、 GY、 GZ
-uint16_t MPU6050_data[5];
+int16_t MPU6050_data[6];
 
+#if whichI2C == 0
 /**
   * @brief  MPU6050写数据
   * @param  writeAddr 寄存器地址
@@ -11,7 +19,11 @@ uint16_t MPU6050_data[5];
   * @retval 无
   */
 void MPU6050_WriteData(uint8_t writeAddr, uint8_t data) {
-	I2C1_Hardware_SendByte(MPU6050_ADDRESS, writeAddr, data);
+	I2C_Software_StartSignal();
+	I2C_Software_SendData(MPU6050_ADDRESS);
+	I2C_Software_SendData(writeAddr);
+	I2C_Software_SendData(data); 
+	I2C_Software_StopSignal();
 }
 
 /**
@@ -21,100 +33,124 @@ void MPU6050_WriteData(uint8_t writeAddr, uint8_t data) {
   * @param  length 要读出的数量
   * @retval 无
   */
-void MPU6050_ReaData(uint8_t writeAddr, uint8_t* dataArray, uint16_t length) {
-	I2C1_Hardware_ReadArray(MPU6050_ADDRESS, writeAddr, dataArray, length);
-}
-
-/**
-  * @brief 	设置MPU6050陀螺仪传感器满量程范围
-  * @param 	fsr 陀螺仪传感器满量程范围
-	* 						0 ： ±250dps
-	* 						1 ： ±500dps
-	* 						2 ： ±1000dps
-	* 						3 ： ±2000dps
-  * @return 无
-  */
-void MPU6050_Set_Gyro_Fsr(uint8_t fsr) {
-	MPU6050_WriteData(MPU6050_GYRO_CFG, fsr<<3);
-}
-
-/**
-  * @brief 	设置MPU6050陀螺仪传感器满量程范围
-  * @param 	fsr 加速度传感器满量程范围
-	* 						0 ： ±2g
-	* 						1 ： ±4g
-	* 						2 ： ±8g
-	* 						3 ： ±16g
-  * @return 无
-  */
-void MPU6050_Set_Accel_Fsr(uint8_t fsr) {
-	MPU6050_WriteData(MPU6050_ACCEL_CFG, fsr<<3);
-}
-
-/**
-  * @brief 	设置MPU6050数字低通滤波器
-  * @param 	lpf 数字低通滤波频率(Hz)
-  * @return 无
-  */
-void MPU6050_Set_LPF(uint16_t lpf) {
-	uint8_t data = 0;
-	if (lpf >= 188) data = 1;
-	else if (lpf >= 98) data=  2;
-	else if (lpf >= 42) data = 3;
-	else if (lpf >= 20) data = 4;
-	else if (lpf >= 10) data = 5;
-	else data = 6;
+void MPU6050_ReaData(uint8_t readAddr, uint8_t* dataArray, uint16_t length) {
+	I2C_Software_StartSignal();
+	I2C_Software_SendData(MPU6050_ADDRESS);
+	I2C_Software_SendData(readAddr);
 	
-	MPU6050_WriteData(MPU6050_CFG, data);
+	I2C_Software_StartSignal();
+	I2C_Software_SendData(MPU6050_ADDRESS | 0x01);
+	
+	for (uint16_t i = 0; i < length; i++) {
+		*(dataArray + i) = I2C_Software_ReceiveByte();
+		I2C_Software_SendAck((i + 1 == length) ? 1 : 0);
+	}
+	I2C_Software_StopSignal();
 }
+
+#else
+
+#if whichI2C == 1
+#define I2CX	I2C1
+#elif whichI2C == 2
+#define I2CX	I2C2
+#endif
+
+#define Timeout	10000
 
 /**
-  * @brief 	设置MPU6050数字低通滤波器(假定Fs=1KHz)
-  * @param 	rate 采样率（4~1000Hz）
+  * @brief 硬件I2C等待事件
+  * @param I2C_EVENT I2C事件 
   * @return 无
   */
-void MPU6050_Set_Rate(uint16_t rate) {
-	uint8_t data;
-	if (rate > 1000) rate = 1000;
-	if (rate < 4) rate = 4;
-	data = 1000 / rate - 1;
-	
-	MPU6050_WriteData(MPU6050_SAMPLE_RATE, data);
- 	MPU6050_Set_LPF(rate / 2);	// 自动设置LPF为采样率的一半
+void MPU6050_WaitEvent(uint32_t I2C_EVENT) {
+	uint32_t To = Timeout;
+	while (I2C_CheckEvent(I2CX, I2C_EVENT) != SUCCESS){
+		To--;
+		if (To == 0) {
+			/* 超时的错误处理代码，可以添加到此处 */
+			break;
+		}
+	}
 }
 
-
-void MPU6050_Init(void) {	
-	uint8_t res;
+void MPU6050_WriteData(uint8_t writeAddr, uint8_t data) {
+	I2C_GenerateSTART(I2CX, ENABLE);										//硬件I2C生成起始条件
+	MPU6050_WaitEvent(I2C_EVENT_MASTER_MODE_SELECT);					//等待EV5
 	
-	MPU6050_WriteData(MPU6050_PWR_MGMT1, 0X80);		// 复位MPU6050
-  Delay_ms(100);
-	MPU6050_WriteData(MPU6050_PWR_MGMT1, 0X00);		// 唤醒MPU6050
-	MPU6050_Set_Gyro_Fsr(3);											// 陀螺仪传感器,±2000dps
-	MPU6050_Set_Accel_Fsr(0);											// 加速度传感器,±2g
-	MPU6050_Set_Rate(50);													// 设置采样率50Hz
-	MPU6050_WriteData(MPU6050_INT_EN, 0X00);			// 关闭所有中断
-	MPU6050_WriteData(MPU6050_USER_CTRL, 0X00);		// I2C主模式关闭
-	MPU6050_WriteData(MPU6050_FIFO_EN, 0X00);			// 关闭FIFO
-	MPU6050_WriteData(MPU6050_INTBP_CFG, 0X80);		// INT引脚低电平有效
+	I2C_Send7bitAddress(I2CX, MPU6050_ADDRESS, I2C_Direction_Transmitter);	//硬件I2C发送从机地址，方向为发送
+	MPU6050_WaitEvent(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED);	//等待EV6
+	
+	I2C_SendData(I2CX, writeAddr);											//硬件I2C发送寄存器地址
+	MPU6050_WaitEvent(I2C_EVENT_MASTER_BYTE_TRANSMITTING);			//等待EV8
+	
+	I2C_SendData(I2CX, data);												//硬件I2C发送数据
+	MPU6050_WaitEvent(I2C_EVENT_MASTER_BYTE_TRANSMITTED);				//等待EV8_2
+	
+	I2C_GenerateSTOP(I2CX, ENABLE);											//硬件I2C生成终止条件
+}
 
-	MPU6050_ReaData(MPU6050_DEVICE_ID, &res, 1);
+/* 读多个字节有BUG */
+void MPU6050_ReaData(uint8_t readAddr, uint8_t* dataArray, uint16_t length) {	
+	I2C_GenerateSTART(I2CX, ENABLE);										//硬件I2C生成起始条件
+	MPU6050_WaitEvent(I2C_EVENT_MASTER_MODE_SELECT);					//等待EV5
+	
+	I2C_Send7bitAddress(I2CX, MPU6050_ADDRESS, I2C_Direction_Transmitter);	//硬件I2C发送从机地址，方向为发送
+	MPU6050_WaitEvent(I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED);	//等待EV6
+	
+	I2C_SendData(I2CX, readAddr);											//硬件I2C发送寄存器地址
+	MPU6050_WaitEvent(I2C_EVENT_MASTER_BYTE_TRANSMITTED);				//等待EV8_2
+	
+	I2C_GenerateSTART(I2CX, ENABLE);										//硬件I2C生成重复起始条件
+	MPU6050_WaitEvent(I2C_EVENT_MASTER_MODE_SELECT);					//等待EV5
+	
+	I2C_Send7bitAddress(I2CX, MPU6050_ADDRESS, I2C_Direction_Receiver);		//硬件I2C发送从机地址，方向为接收
+	MPU6050_WaitEvent(I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED);		//等待EV6
+	
+	for (uint16_t i = 0; i < length; i++) {
+		if (i + 1 == length) {
+			I2C_AcknowledgeConfig(I2CX, DISABLE);									//在接收最后一个字节之前提前将应答失能
+			I2C_GenerateSTOP(I2CX, ENABLE);											//在接收最后一个字节之前提前申请停止条件
+		}
+		
+		MPU6050_WaitEvent(I2C_EVENT_MASTER_BYTE_RECEIVED);				//等待EV7
+		*(dataArray + i) = I2C_ReceiveData(I2CX);											//接收数据寄存器
+	}
+	
+	I2C_AcknowledgeConfig(I2CX, ENABLE);									//将应答恢复为使能，为了不影响后续可能产生的读取多字节操作
+}
+#endif
 
-	if(res == MPU6050_ADDRESS) {
-		MPU6050_WriteData(MPU6050_PWR_MGMT1, 0X01);	// 设置CLKSEL,PLL X轴为参考
-		MPU6050_WriteData(MPU6050_PWR_MGMT2, 0X00);	// 加速度与陀螺仪都工作
-		MPU6050_Set_Rate(50);												// 设置采样率为50Hz
- 	}
+void MPU6050_Init(void) {
+	MPU6050_WriteData(MPU6050_PWR_MGMT1, 0X01);  	// 取消睡眠模式，选择时钟源为X轴陀螺仪
+	MPU6050_WriteData(MPU6050_PWR_MGMT2, 0X00); 	// 所有轴均不待机
+	MPU6050_WriteData(MPU6050_SAMPLE_RATE, 0x09);	// 采样率分频寄存器，配置采样率
+	MPU6050_WriteData(MPU6050_CFG, 0x06);					// 配置寄存器，配置DLPF
+	MPU6050_WriteData(MPU6050_GYRO_CFG, 0x18);    // 陀螺仪配置寄存器，选择满量程为±2000°/s
+	MPU6050_WriteData(MPU6050_ACCEL_CFG, 0x18);   // 加速度计配置寄存器，选择满量程为±16g
 }
 
 uint8_t MPU6050_GetID(void) {
 	uint8_t ID;
+	
+//	I2C_Software_StartSignal();
+//	I2C_Software_SendData(MPU6050_ADDRESS);
+//	I2C_Software_SendData(MPU6050_WHO_AM_I);
+//	
+//	I2C_Software_StartSignal();
+//	I2C_Software_SendData(MPU6050_ADDRESS | 0x01);
+//	
+//	ID = I2C_Software_ReceiveByte();
+//	I2C_Software_SendAck(1);
+//	I2C_Software_StopSignal();
+	
 	MPU6050_ReaData(MPU6050_WHO_AM_I, &ID, 1);
+	
 	return ID;
 }
 
 void MPU6050_READ(void) {
-	uint8_t original_data[14];
+	static uint8_t original_data[14];
 	
 	// 读出连续的数据地址，包括了加速度和陀螺仪共12字节
 	MPU6050_ReaData(MPU6050_ACCEL_XOUTH, original_data, 14);
@@ -123,6 +159,6 @@ void MPU6050_READ(void) {
 	for(uint8_t i = 0; i < 3; i++)
 		MPU6050_data[i] = ((original_data[2 * i] << 8) + original_data[2 * i + 1]);
 	for(uint8_t i = 4; i < 7; i++)
-		MPU6050_data[i - 1] = ((original_data[2 * i] << 8) + original_data[2 * i +1 ]);        
+		MPU6050_data[i - 1] = ((original_data[2 * i] << 8) + original_data[2 * i +1 ]);	
 }
 

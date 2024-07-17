@@ -7,6 +7,7 @@
   */
 void SCL_Write(uint8_t state) {
 	GPIO_WriteBit(I2C_Software_Port, I2C_Software_Pin_SCL, (BitAction)state);
+  Delay_us(10);
 }
 
 /**
@@ -16,6 +17,7 @@ void SCL_Write(uint8_t state) {
   */
 void SDA_Write(uint8_t state) {
 	GPIO_WriteBit(I2C_Software_Port, I2C_Software_Pin_SDA, (BitAction)state);
+  Delay_us(10);
 }
 
 /**
@@ -23,10 +25,10 @@ void SDA_Write(uint8_t state) {
   * @retval 读取到的数据
   */
 uint8_t SDA_Read(void) {
-    uint8_t BitValue;
-    BitValue = GPIO_ReadInputDataBit(I2C_Software_Port, I2C_Software_Pin_SDA);
-    Delay_us(10);
-    return BitValue;
+	uint8_t BitValue;
+	BitValue = GPIO_ReadInputDataBit(I2C_Software_Port, I2C_Software_Pin_SDA);
+	Delay_us(10);
+	return BitValue;
 }
 
 ///////////////////////////////////////////////////////////
@@ -56,8 +58,9 @@ void I2C_Software_SendData(uint8_t Byte) {
 		SCL_Write(1);
 		SCL_Write(0);
 	}
-	SCL_Write(1);	//额外的一个时钟，不处理应答信号
-	SCL_Write(0);
+//	SCL_Write(1);	//额外的一个时钟，不处理应答信号
+//	SCL_Write(0);
+	I2C_Software_ReceiveAck();
 }
 
 uint8_t I2C_Software_ReceiveByte(void) {

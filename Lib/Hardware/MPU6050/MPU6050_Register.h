@@ -11,7 +11,8 @@
 ///////////////////////////////////////////////////////////
 
 // MPU6050地址
-#define MPU6050_ADDRESS				0xD0
+#define MPU6050_ADDRESS					0xD0
+#define MPU6050_ADDRESS1				0xD2	// AD0引脚在高电平下的地址
 
 // 电源管理寄存器
 #define MPU6050_PWR_MGMT1 			0X6B
