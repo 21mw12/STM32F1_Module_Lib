@@ -1,0 +1,129 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 PRESERVE8
+    2 00000000                 THUMB
+    3 00000000         
+    4 00000000         ; Vector Table Mapped to Address 0 at Reset
+    5 00000000                 AREA             RESET, DATA, READONLY
+    6 00000000                 EXPORT           __Vectors
+    7 00000000         
+    8 00000000 20005000 
+                       __Vectors
+                               DCD              0x20000000+0x5000 
+                                                            ; Top of Stack
+    9 00000004 00000000        DCD              Reset_Handler ; Reset Handler
+   10 00000008         
+   11 00000008                 AREA             |.text|, CODE, READONLY
+   12 00000000         
+   13 00000000         ; Reset handler
+   14 00000000         Reset_Handler
+                               PROC
+   15 00000000                 EXPORT           Reset_Handler             [WEAK
+]
+   16 00000000                 IMPORT           main
+   17 00000000         
+   18 00000000 F7FF FFFE       BL               main
+   19 00000004         
+   20 00000004                 ENDP
+   21 00000004         
+   22 00000004         App_Start
+                               PROC
+   23 00000004                 EXPORT           App_Start
+   24 00000004         
+   25 00000004         ; set vector base address as param
+   26 00000004 4B02            LDR              r3, =0xE000ED08
+   27 00000006 6018            STR              r0, [r3]
+   28 00000008         
+   29 00000008         ; set sp val
+   30 00000008 F8D0 D000       LDR              SP, [r0]    ; read val from add
+                                                            r param
+   31 0000000C 6841            LDR              r1, [r0, #4] ; read val from ad
+                                                            dr param 4
+   32 0000000E         
+   33 0000000E         ; skip
+   34 0000000E 4708            BX               r1
+   35 00000010         
+   36 00000010                 ENDP
+   37 00000010         
+   38 00000010                 END
+              E000ED08 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\objects\startup_stm32f10x_md.d -o.\objects\startup_stm32f10x_md.
+o -IS:\Keil5\Keil\STM32F1xx_DFP\2.4.1\Device\Include --predefine="__UVISION_VER
+SION SETA 535" --predefine="STM32F10X_MD SETA 1" --list=.\listings\startup_stm3
+2f10x_md.lst Start\startup_stm32f10x_md.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+RESET 00000000
+
+Symbol: RESET
+   Definitions
+      At line 5 in file Start\startup_stm32f10x_md.s
+   Uses
+      None
+Comment: RESET unused
+__Vectors 00000000
+
+Symbol: __Vectors
+   Definitions
+      At line 8 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 6 in file Start\startup_stm32f10x_md.s
+Comment: __Vectors used once
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.text 00000000
+
+Symbol: .text
+   Definitions
+      At line 11 in file Start\startup_stm32f10x_md.s
+   Uses
+      None
+Comment: .text unused
+App_Start 00000004
+
+Symbol: App_Start
+   Definitions
+      At line 22 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 23 in file Start\startup_stm32f10x_md.s
+Comment: App_Start used once
+Reset_Handler 00000000
+
+Symbol: Reset_Handler
+   Definitions
+      At line 14 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 9 in file Start\startup_stm32f10x_md.s
+      At line 15 in file Start\startup_stm32f10x_md.s
+
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 16 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 18 in file Start\startup_stm32f10x_md.s
+Comment: main used once
+1 symbol
+340 symbols in table

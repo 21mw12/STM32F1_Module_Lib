@@ -1,0 +1,135 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 PRESERVE8
+    2 00000000                 THUMB
+    3 00000000         
+    4 00000000         
+    5 00000000         ; Vector Table Mapped to Address 0 at Reset
+    6 00000000                 AREA             RESET, DATA, READONLY
+    7 00000000                 EXPORT           __Vectors
+    8 00000000         
+    9 00000000 20005000 
+                       __Vectors
+                               DCD              0x20000000+0x5000 
+                                                            ; Top of Stack
+   10 00000004         ; ÐèÒªÔÚ·´»ã±à´úÂëÖÐÕÒµ½Reset HandlerµÄÄÚ´æµØÖ·£¬ÔÙÐÞ¸ÄÎ
+                       ªFlashµØÖ·+1
+   11 00000004 08005029        DCD              0x08005029  ; Reset Handler
+   12 00000008         
+   13 00000008                 AREA             |.text|, CODE, READONLY
+   14 00000000         
+   15 00000000         ; Reset handler
+   16 00000000         Reset_Handler
+                               PROC
+   17 00000000                 EXPORT           Reset_Handler             [WEAK
+]
+   18 00000000                 IMPORT           app_main
+   19 00000000                 IMPORT           APP_CopyToRAM
+   20 00000000                 IMPORT           |Image$$ER_IROM1$$Length|
+   21 00000000         
+   22 00000000         ; µÃµ½µ±Ç°µØÖ·²¢Çå³ýµÍ8Î»£¬½á¹ûÎª0x08005000
+   23 00000000 F2AF 0004       ADR              r0, Reset_Handler
+   24 00000004 F020 00FF       BIC              r0, r0, #0xFF
+   25 00000008         ; ¿½±´µÄÄ¿µÄµØÖ·
+   26 00000008 4902            ldr              r1, =__Vectors
+   27 0000000A         ; ¿½±´µÄÄ¿µÄ³¤¶È
+   28 0000000A 4A03            ldr              r2, =|Image$$ER_IROM1$$Length|
+   29 0000000C         ; Ö´ÐÐ¿½±´º¯Êý
+   30 0000000C F7FF FFFE       BL               APP_CopyToRAM
+   31 00000010         
+   32 00000010 F7FF FFFE       BL               app_main
+   33 00000014         
+   34 00000014                 ENDP
+   35 00000014         
+   36 00000014                 END
+              00000000 
+              00000000 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\objects\startup_stm32f10x_md.d -o.\objects\startup_stm32f10x_md.
+o -IS:\Keil5\Keil\STM32F1xx_DFP\2.4.1\Device\Include --predefine="__UVISION_VER
+SION SETA 535" --predefine="STM32F10X_MD SETA 1" --list=.\listings\startup_stm3
+2f10x_md.lst Start\startup_stm32f10x_md.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+RESET 00000000
+
+Symbol: RESET
+   Definitions
+      At line 6 in file Start\startup_stm32f10x_md.s
+   Uses
+      None
+Comment: RESET unused
+__Vectors 00000000
+
+Symbol: __Vectors
+   Definitions
+      At line 9 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 7 in file Start\startup_stm32f10x_md.s
+      At line 26 in file Start\startup_stm32f10x_md.s
+
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.text 00000000
+
+Symbol: .text
+   Definitions
+      At line 13 in file Start\startup_stm32f10x_md.s
+   Uses
+      None
+Comment: .text unused
+Reset_Handler 00000000
+
+Symbol: Reset_Handler
+   Definitions
+      At line 16 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 17 in file Start\startup_stm32f10x_md.s
+      At line 23 in file Start\startup_stm32f10x_md.s
+
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+APP_CopyToRAM 00000000
+
+Symbol: APP_CopyToRAM
+   Definitions
+      At line 19 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 30 in file Start\startup_stm32f10x_md.s
+Comment: APP_CopyToRAM used once
+Image$$ER_IROM1$$Length 00000000
+
+Symbol: Image$$ER_IROM1$$Length
+   Definitions
+      At line 20 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 28 in file Start\startup_stm32f10x_md.s
+Comment: Image$$ER_IROM1$$Length used once
+app_main 00000000
+
+Symbol: app_main
+   Definitions
+      At line 18 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 32 in file Start\startup_stm32f10x_md.s
+Comment: app_main used once
+3 symbols
+341 symbols in table
