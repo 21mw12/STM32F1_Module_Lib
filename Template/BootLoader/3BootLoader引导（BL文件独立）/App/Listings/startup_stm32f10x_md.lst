@@ -1,0 +1,102 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 PRESERVE8
+    2 00000000                 THUMB
+    3 00000000         
+    4 00000000         
+    5 00000000         ; Vector Table Mapped to Address 0 at Reset
+    6 00000000                 AREA             RESET, DATA, READONLY
+    7 00000000                 EXPORT           __Vectors
+    8 00000000         
+    9 00000000 20005000 
+                       __Vectors
+                               DCD              0x20000000+0x5000 
+                                                            ; Top of Stack
+   10 00000004 00000000        DCD              Reset_Handler ; Reset Handler
+   11 00000008         
+   12 00000008                 AREA             |.text|, CODE, READONLY
+   13 00000000         
+   14 00000000         ; Reset handler
+   15 00000000         Reset_Handler
+                               PROC
+   16 00000000                 EXPORT           Reset_Handler             [WEAK
+]
+   17 00000000                 IMPORT           app_main
+   18 00000000         
+   19 00000000 F7FF FFFE       BL               app_main
+   20 00000004         
+   21 00000004                 ENDP
+   22 00000004         
+   23 00000004                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\objects\startup_stm32f10x_md.d -o.\objects\startup_stm32f10x_md.
+o -IS:\Keil5\Keil\STM32F1xx_DFP\2.4.1\Device\Include --predefine="__UVISION_VER
+SION SETA 535" --predefine="STM32F10X_MD SETA 1" --list=.\listings\startup_stm3
+2f10x_md.lst Start\startup_stm32f10x_md.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+RESET 00000000
+
+Symbol: RESET
+   Definitions
+      At line 6 in file Start\startup_stm32f10x_md.s
+   Uses
+      None
+Comment: RESET unused
+__Vectors 00000000
+
+Symbol: __Vectors
+   Definitions
+      At line 9 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 7 in file Start\startup_stm32f10x_md.s
+Comment: __Vectors used once
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.text 00000000
+
+Symbol: .text
+   Definitions
+      At line 12 in file Start\startup_stm32f10x_md.s
+   Uses
+      None
+Comment: .text unused
+Reset_Handler 00000000
+
+Symbol: Reset_Handler
+   Definitions
+      At line 15 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 10 in file Start\startup_stm32f10x_md.s
+      At line 16 in file Start\startup_stm32f10x_md.s
+
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+app_main 00000000
+
+Symbol: app_main
+   Definitions
+      At line 17 in file Start\startup_stm32f10x_md.s
+   Uses
+      At line 19 in file Start\startup_stm32f10x_md.s
+Comment: app_main used once
+1 symbol
+337 symbols in table

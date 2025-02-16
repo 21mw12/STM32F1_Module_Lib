@@ -38,11 +38,15 @@
 - 效果：Boot阶段C14引脚LED会亮，APP阶段C13引脚LED闪烁。
 - 原理：Boot程序读取APP的头部信息并分析，将APP程序复制到内存中，再到内存中执行。
 
+- 给APP添加头部信息
+
+  ```shell
+  ./mkimage.exe -n "stm32f103_app" -a 0x20000000 -e 0x20000029 -d project.bin app.bin
+  ```
 
 
 
+# 调试内存程序
 
-
-
-
+- 调试内存中运行的程序模板
 
